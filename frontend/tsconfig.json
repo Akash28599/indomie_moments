@@ -1,0 +1,19 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "include": ["src"],
+  "exclude": [
+    "src/app/ui/calendar.tsx",
+    "src/app/ui/chart.tsx",
+    "src/app/ui/resizable.tsx",
+    "src/app/ui/sidebar.tsx",
+    "src/app/ui/sonner.tsx"
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "strict": true
+  }
+}

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env.local
+drizzle/
+*.log
+.DS_Store
+*.tsbuildinfo
