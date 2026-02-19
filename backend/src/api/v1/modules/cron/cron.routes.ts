@@ -16,7 +16,7 @@ cronRouter.post("/refresh-weekly", (req: Request, res: Response, next: NextFunct
 /**
  * GET /api/v1/cron/health
  */
-cronRouter.get("/health", (req: Request, res: Response) => {
+cronRouter.get("/health", (_req: Request, res: Response) => {
   console.log("✅ GET /health called");
   res.json({
     success: true,

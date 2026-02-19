@@ -48,7 +48,7 @@ export async function buildExportStreamService(search?: string, campaignId?: str
 
 export async function getUserAnalyticsService(page: number, limit: number, search?: string) {
   const offset = (page - 1) * limit;
-  const { users, total } = await getUserAnalyticsRepo(limit, offset, search);
+const { users, total } = await getUserAnalyticsRepo({ limit, offset, search });
   return {
     users,
     total,

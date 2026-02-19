@@ -1,4 +1,4 @@
-import { eq, sql, desc, count, ilike, or, and, SQL } from "drizzle-orm";
+import { eq, sql, desc, count, ilike, or, SQL } from "drizzle-orm";
 import { db } from "../../../../../db";
 import { users, campaigns, moments, momentLikes } from "../../../../../db/schema";
 
