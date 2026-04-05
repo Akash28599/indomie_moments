@@ -14,6 +14,8 @@ import { Login } from "../modules/user/auth/login/Login";
 import {Register} from "../modules/user/auth/register/Register";
 import { ProtectedRoute } from "./ProtectedRoute";
 import NotFound from "../modules/common/pages/Notfound";
+import PrivacyPolicy from "../modules/common/pages/PrivacyPolicy";
+import TermsOfService from "../modules/common/pages/TermsOfService";
 
 
 
@@ -75,6 +77,8 @@ export const SCREEN_LIST = [
       ),
     },
     { path: "share/:slug", element: <SharePage /> },
+    { path: "privacy-policy", element: <PrivacyPolicy /> },
+    { path: "terms", element: <TermsOfService /> },
     { path: "*", element: <NotFound /> },
   ],
 },
