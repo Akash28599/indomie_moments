@@ -19,7 +19,7 @@ import { getShareUrl } from "../../../utils/shareUrl";
 
 export async function createMomentService(
   userId: string,
-  _userName: string,
+  _userName: string | null,
   file: Express.Multer.File,
   caption: string,
   consentGiven: boolean
