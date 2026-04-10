@@ -284,13 +284,29 @@ export async function sendOTP(
   code: string,
   smsType: string = "generic",
 ): Promise<SendOTPResult> {
+  const network = detectNetwork(phoneNumber);
+  
+  if (network === 'AIRTEL') {
+    try {
+      logger.info("Airtel detected: Routing to Bigture", { phone: phoneNumber });
+      return await sendBigtureOTP(phoneNumber, code, smsType);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.error("Bigture failed for Airtel. Attempting Termii as final fallback.", { 
+        error: message, 
+        phone: phoneNumber 
+      });
+      return await sendTermiiOTP(phoneNumber, code, smsType);
+    }
+  }
+
+  // Global Priority: Termii first, then Bigture
   try {
-    logger.info("Attempting OTP via Bigture", { phone: phoneNumber });
-    return await sendBigtureOTP(phoneNumber, code, smsType);
+    logger.info("Attempting OTP via Termii", { phone: phoneNumber, network });
+    return await sendTermiiOTP(phoneNumber, code, smsType);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    logger.error("Bigture OTP failed, falling back to Termii", { error: message, phone: phoneNumber });
-    // Fallback to Termii
-    return await sendTermiiOTP(phoneNumber, code, smsType);
+    logger.error("Termii OTP failed, falling back to Bigture", { error: message, phone: phoneNumber });
+    return await sendBigtureOTP(phoneNumber, code, smsType);
   }
 }
