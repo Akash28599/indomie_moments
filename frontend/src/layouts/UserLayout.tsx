@@ -44,16 +44,16 @@ const UserLayout = () => {
 
   return (
     <div className="h-[100dvh] flex flex-col overflow-hidden">
-      {/* Header – hidden on guest landing page & on mobile for authenticated users */}
-      {!isGuestHomePage && <Header config={userHeaderConfig} />}
+      {/* Header – hidden on guest landing page & immersive moments page */}
+      {!isGuestHomePage && !isImmersivePage && <Header config={userHeaderConfig} />}
 
       {/* 🔥 MAIN CONTENT */}
       <main className="flex-1 min-h-0">
         <Outlet />
       </main>
 
-      {/* Footer – hidden on mobile (BottomNav replaces it), shown on desktop */}
-      {!isGuestHomePage && (
+      {/* Footer – hidden on mobile and immersive pages */}
+      {!isGuestHomePage && !isImmersivePage && (
         <div className="hidden md:block">
           <Footer config={userFooterConfig} />
         </div>

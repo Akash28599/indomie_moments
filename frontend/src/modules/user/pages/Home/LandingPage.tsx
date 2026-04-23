@@ -13,7 +13,7 @@ import { indomieLogo } from "../../../../assets";
 
 /**
  * LandingPage – Single viewport, no-scroll mobile-first landing.
- * Features: Redemption Banner, Prizes, CTA – all within 100dvh.
+ * Optimized for Desktop with a premium side-by-side layout.
  */
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -45,88 +45,122 @@ const LandingPage = () => {
         className="bg-[#DF2020] py-2.5 px-4 flex items-center justify-center gap-2 z-50 shadow-md cursor-pointer hover:bg-red-700 transition-colors shrink-0"
       >
         <MapPin className="w-3.5 h-3.5 text-white animate-bounce" />
-        <span className="text-white text-[10px] font-black uppercase tracking-[0.1em]">
+        <span className="text-white text-[10px] md:text-xs font-black uppercase tracking-[0.1em]">
           Find your nearest redemption center
         </span>
       </div>
 
-      <div className="max-w-md mx-auto w-full bg-[#FFF8F0] flex-1 flex flex-col relative overflow-hidden">
+      <div className="max-w-md md:max-w-6xl mx-auto w-full bg-[#FFF8F0] flex-1 flex flex-col relative overflow-hidden">
         
         {/* ─── Header ─── */}
-        <header className="px-5 py-4 flex items-center gap-2 shrink-0">
-          <img src={indomieLogo} alt="Indomie" className="h-7 w-auto" />
-          <h1 className="text-[#DF2020] font-black text-lg tracking-tight">
-            Indomie Moments
-          </h1>
+        <header className="px-5 md:px-10 py-4 md:py-8 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2">
+            <img src={indomieLogo} alt="Indomie" className="h-7 md:h-10 w-auto" />
+            <h1 className="text-[#DF2020] font-black text-lg md:text-2xl tracking-tight">
+              Indomie Moments
+            </h1>
+          </div>
+          {/* Desktop Login Button */}
+          <button 
+            onClick={() => setIsAuthModalOpen(true)}
+            className="hidden md:flex bg-white text-[#DF2020] border-2 border-[#DF2020] px-6 py-2 rounded-xl font-black text-sm hover:bg-[#DF2020] hover:text-white transition-all shadow-sm"
+          >
+            Login / Sign Up
+          </button>
         </header>
 
-        {/* ─── Image Placeholder (images will be placed here) ─── */}
-        <div className="px-5 shrink-0">
-          <div className="w-full h-36 rounded-2xl bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 border-2 border-dashed border-red-200 flex items-center justify-center">
-            <p className="text-[10px] font-black text-red-300 uppercase tracking-widest">Promotional Images Here</p>
+        {/* ─── Hero Content Area ─── */}
+        <div className="flex-1 flex flex-col md:flex-row min-h-0 px-5 md:px-10 gap-8 md:gap-16">
+          
+          {/* LEFT SIDE: Text & CTA */}
+          <div className="flex-1 flex flex-col justify-center max-w-xl">
+            <motion.div
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-[1.8rem] md:text-[3.5rem] font-black text-[#DF2020] leading-[1.1] tracking-tight mb-3 md:mb-6" style={{ fontFamily: "'Inter', 'Outfit', system-ui, sans-serif" }}>
+                Share your Indomie moment & win!
+              </h1>
+              
+              <p className="text-gray-500 text-xs md:text-lg font-medium leading-relaxed mb-6 md:mb-10">
+                Upload your best Indomie moment, collect likes, and win amazing prizes every week. Join thousands of fans sharing their love for Indomie!
+              </p>
+
+              {/* Desktop CTA */}
+              <div className="hidden md:block">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="bg-[#DF2020] text-white py-5 px-10 rounded-2xl font-black text-xl shadow-xl shadow-red-500/40 flex items-center gap-4 group"
+                >
+                  Start the Journey
+                  <Rocket className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT SIDE: Images & Prizes */}
+          <div className="flex-1 flex flex-col justify-center min-h-0">
+            {/* Promotional Image / Video Area */}
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="shrink-0 mb-6 md:mb-10"
+            >
+              <div className="w-full h-36 md:h-64 rounded-3xl bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 border-2 border-dashed border-red-200 flex items-center justify-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity" />
+                <p className="text-[10px] md:text-sm font-black text-red-400 uppercase tracking-[0.3em] relative z-10">Promotional Showcase</p>
+              </div>
+            </motion.div>
+
+            {/* Prizes Section */}
+            <section className="shrink-0">
+              <h2 className="text-[9px] md:text-xs font-black text-red-400 uppercase tracking-[0.2em] mb-4">
+                Grand Prizes to be Won
+              </h2>
+              
+              <div className="flex gap-3 md:gap-6">
+                {prizes.map((prize, idx) => (
+                  <motion.div
+                    key={prize.id}
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 + idx * 0.1 }}
+                    className="flex-1 bg-white rounded-2xl md:rounded-3xl p-3 md:p-5 border border-gray-100 shadow-lg shadow-gray-200/50 flex flex-col items-center text-center hover:scale-105 transition-transform cursor-default"
+                  >
+                    <div className="w-14 md:w-24 h-14 md:h-24 rounded-xl md:rounded-2xl overflow-hidden mb-2 md:mb-4 shadow-inner">
+                      <img src={prize.image} alt={prize.name} className="w-full h-full object-cover" />
+                    </div>
+                    <h3 className="font-bold text-gray-900 text-[10px] md:text-sm mb-1 md:mb-2">{prize.name}</h3>
+                    <span className={`${prize.labelColor} text-[7px] md:text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-wider`}>
+                      {prize.label}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+            </section>
           </div>
         </div>
 
-        {/* ─── Hero Content ─── */}
-        <main className="px-5 flex-1 flex flex-col min-h-0">
-          <motion.div
-            initial={{ y: 15, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
+        {/* Mobile-only CTA (pinned to bottom) */}
+        <div className="md:hidden px-5 pb-6 mt-auto">
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsAuthModalOpen(true)}
+            className="w-full bg-[#DF2020] text-white py-4 rounded-2xl font-black text-sm shadow-xl shadow-red-500/40 flex items-center justify-center gap-3"
           >
-            <h1 className="text-[1.8rem] font-black text-[#DF2020] leading-[1.1] tracking-tight mb-1.5" style={{ fontFamily: "'Inter', 'Outfit', system-ui, sans-serif" }}>
-              Share your Indomie moment & win!
-            </h1>
-            
-            <p className="text-gray-500 text-xs font-medium leading-relaxed max-w-[300px] mb-4">
-              Upload your best Indomie moment, collect likes, and win amazing prizes every week.
-            </p>
-          </motion.div>
+            Start the Journey
+            <Rocket className="w-4 h-4" />
+          </motion.button>
+        </div>
 
-          {/* ─── Grand Prizes Section ─── */}
-          <section className="mb-4 shrink-0">
-            <h2 className="text-[9px] font-black text-red-400 uppercase tracking-[0.2em] mb-3">
-              Grand Prizes to be Won
-            </h2>
-            
-            <div className="flex gap-3 no-scrollbar">
-              {prizes.map((prize, idx) => (
-                <motion.div
-                  key={prize.id}
-                  initial={{ x: 15, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 + idx * 0.1 }}
-                  className="flex-1 bg-white rounded-2xl p-2.5 border border-gray-100 shadow-lg shadow-gray-200/50 flex flex-col items-center text-center"
-                >
-                  <div className="w-14 h-14 rounded-xl overflow-hidden mb-1.5">
-                    <img src={prize.image} alt={prize.name} className="w-full h-full object-cover" />
-                  </div>
-                  <h3 className="font-bold text-gray-900 text-[10px] mb-0.5">{prize.name}</h3>
-                  <span className={`${prize.labelColor} text-[7px] font-black px-1.5 py-0.5 rounded`}>
-                    {prize.label}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* ─── CTA Button ─── */}
-          <div className="pb-4 shrink-0 mt-auto">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setIsAuthModalOpen(true)}
-              className="w-full bg-[#DF2020] text-white py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-red-500/40 flex items-center justify-center gap-3 relative overflow-hidden group"
-            >
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              Start the Journey
-              <Rocket className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </motion.button>
-          </div>
-        </main>
-
-        {/* Background Decorative Element */}
-        <div className="absolute top-1/2 -right-20 w-64 h-64 bg-red-50 rounded-full blur-[100px] pointer-events-none -z-10" />
+        {/* Background Decorative Elements */}
+        <div className="absolute top-1/2 -right-20 w-64 md:w-96 h-64 md:h-96 bg-red-50 rounded-full blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute -bottom-20 -left-20 w-64 md:w-96 h-64 md:h-96 bg-yellow-50 rounded-full blur-[100px] pointer-events-none -z-10" />
       </div>
 
       <AuthModal 
@@ -140,23 +174,23 @@ const LandingPage = () => {
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl relative"
+            className="w-full max-w-sm md:max-w-md bg-white rounded-3xl p-6 md:p-8 shadow-2xl relative"
           >
             <button 
               onClick={() => setIsLocationModalOpen(false)}
-              className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
-            <h2 className="text-lg font-black text-[#DF2020] mb-3 flex items-center gap-2">
-              <MapPin className="w-4 h-4" /> Active Centers
+            <h2 className="text-xl font-black text-[#DF2020] mb-4 flex items-center gap-2">
+              <MapPin className="w-5 h-5" /> Active Centers
             </h2>
             
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-3 mb-4">
               <select 
                 value={selectedState} 
                 onChange={e => { setSelectedState(e.target.value); setSelectedCity("All"); }}
-                className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2"
+                className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3"
               >
                 <option value="Lagos">Lagos</option>
                 <option value="Abuja">Abuja</option>
@@ -165,7 +199,7 @@ const LandingPage = () => {
               <select 
                 value={selectedCity} 
                 onChange={e => setSelectedCity(e.target.value)}
-                className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2"
+                className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3"
               >
                 <option value="All">All Cities</option>
                 <option value="Surulere">Surulere</option>
@@ -174,41 +208,43 @@ const LandingPage = () => {
               </select>
             </div>
 
-            <div className="space-y-2.5 max-h-52 overflow-y-auto pr-1 custom-scrollbar">
+            <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
               {filteredCenters.map((center, i) => (
-                <div key={i} className="p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-red-200 transition-all group hover:shadow-md">
-                  <div className="flex justify-between items-start mb-1">
-                    <h4 className="font-bold text-gray-900 text-xs group-hover:text-[#DF2020] transition-colors">{center.name}</h4>
-                    <div className="flex items-center gap-1">
-                      <div className={`w-1.5 h-1.5 rounded-full ${center.status.includes('Open') ? 'bg-green-500' : 'bg-orange-500'}`} />
-                      <span className="text-[7px] font-black text-gray-800 uppercase tracking-wider">{center.status}</span>
+                <div key={i} className="p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-200 transition-all group hover:shadow-md">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-bold text-gray-900 text-sm group-hover:text-[#DF2020] transition-colors">{center.name}</h4>
+                    <div className="flex items-center gap-1.5">
+                      <div className={`w-2 h-2 rounded-full ${center.status.includes('Open') ? 'bg-green-500' : 'bg-orange-500'}`} />
+                      <span className="text-[8px] font-black text-gray-800 uppercase tracking-wider">{center.status}</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-gray-500 mb-1.5">{center.address}</p>
+                  <p className="text-xs text-gray-500 mb-2">{center.address}</p>
                   
-                  <div className="bg-white p-2 rounded-lg border border-gray-100 mb-1.5">
-                    <p className="text-[8px] text-gray-500 uppercase font-black mb-0.5">Supervisor</p>
-                    <p className="text-[10px] font-bold text-gray-800">{center.supervisor}</p>
-                    <p className="text-[10px] text-[#DF2020]">{center.phone}</p>
+                  <div className="bg-white p-3 rounded-xl border border-gray-100 mb-2 text-xs">
+                    <p className="text-[9px] text-gray-500 uppercase font-black mb-1">Supervisor</p>
+                    <div className="flex justify-between">
+                      <p className="font-bold text-gray-800">{center.supervisor}</p>
+                      <p className="text-[#DF2020] font-black">{center.phone}</p>
+                    </div>
                   </div>
 
                   <a 
                     href={center.mapLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:underline"
                   >
-                    View on Google Maps <ChevronRight className="w-3 h-3" />
+                    View on Google Maps <ChevronRight className="w-3.5 h-3.5" />
                   </a>
                 </div>
               ))}
               {filteredCenters.length === 0 && (
-                <p className="text-center text-gray-500 text-xs py-4">No centers found in this location.</p>
+                <p className="text-center text-gray-500 text-sm py-8">No centers found in this location.</p>
               )}
             </div>
             <button 
               onClick={() => setIsLocationModalOpen(false)}
-              className="w-full mt-4 bg-gray-900 text-white font-black text-xs uppercase py-3 rounded-xl hover:bg-black transition-colors"
+              className="w-full mt-6 bg-gray-900 text-white font-black text-xs uppercase py-4 rounded-2xl hover:bg-black transition-colors"
             >
               Got it
             </button>

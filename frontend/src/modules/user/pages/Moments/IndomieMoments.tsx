@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 /**
  * IndomieMoments – TikTok-style full-screen vertical feed.
- * "Friends" tab shows friend moments first, "For You" shows all.
+ * Redesigned for Desktop: Immersive "phone" container in center.
  */
 
 const DUMMY_MOMENTS = [
@@ -27,7 +27,6 @@ const IndomieMoments = () => {
   const scrollRef = useRef(null);
 
   const apiMoments = momentsData?.items || [];
-  // Use dummy data as fallback when API has no results
   const allMoments = apiMoments.length > 0 ? apiMoments : DUMMY_MOMENTS;
 
   const friendMoments = allMoments.filter((m: any) => m.isFriend || false);
@@ -43,68 +42,69 @@ const IndomieMoments = () => {
     );
   }
 
-  if (moments.length === 0) {
-    return (
-      <div className="h-[100dvh] bg-black flex flex-col items-center justify-center text-white px-6 text-center">
-        <Users className="w-16 h-16 text-gray-600 mb-4" />
-        <h2 className="text-xl font-black mb-2">No moments yet</h2>
-        <p className="text-gray-400 text-sm mb-6">
-          {activeTab === "friends" 
-            ? "Your friends haven't posted any moments yet. Check out For You!" 
-            : "Be the first to share an Indomie moment!"}
-        </p>
-        {activeTab === "friends" && (
-          <button 
-            onClick={() => setActiveTab("foryou")}
-            className="bg-[#E2231A] text-white px-6 py-3 rounded-full font-bold text-sm"
-          >
-            Explore For You
-          </button>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <div className="h-[100dvh] bg-black overflow-y-scroll snap-y snap-mandatory scrollbar-none" ref={scrollRef}>
-      {/* Header Overlays */}
-      <div className="fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-between pointer-events-none">
-        <button 
-          onClick={() => navigate(-1)}
-          className="p-2 bg-black/20 backdrop-blur-md rounded-full pointer-events-auto"
-        >
-          <ChevronLeft className="text-white w-6 h-6" />
-        </button>
-        <div className="flex gap-1 bg-black/30 backdrop-blur-md rounded-full p-1 pointer-events-auto">
-          <button 
-            onClick={() => setActiveTab("friends")}
-            className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all ${
-              activeTab === "friends" 
-                ? "bg-white text-black" 
-                : "text-white/70 hover:text-white"
-            }`}
-          >
-            <Users className="w-3 h-3 inline mr-1 -mt-0.5" />
-            Friends
-          </button>
-          <button 
-            onClick={() => setActiveTab("foryou")}
-            className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all ${
-              activeTab === "foryou" 
-                ? "bg-white text-black" 
-                : "text-white/70 hover:text-white"
-            }`}
-          >
-            <Globe className="w-3 h-3 inline mr-1 -mt-0.5" />
-            For You
-          </button>
-        </div>
-        <div className="w-10" />
+    <div className="h-[100dvh] bg-[#0F0F0F] flex justify-center overflow-hidden relative">
+      
+      {/* ─── DESKTOP BACKGROUND BLUR ─── */}
+      <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-1/2 h-full bg-red-900/10 blur-[120px] -translate-x-1/2" />
+        <div className="absolute bottom-0 right-0 w-1/2 h-full bg-yellow-900/10 blur-[120px] translate-x-1/2" />
       </div>
 
-      {moments.map((moment) => (
-        <MomentPost key={moment.id} moment={moment} />
-      ))}
+      {/* ─── MOMENTS FEED CONTAINER ─── */}
+      <div 
+        className="w-full md:max-w-[450px] h-full bg-black shadow-2xl relative overflow-y-scroll snap-y snap-mandatory scrollbar-none z-10" 
+        ref={scrollRef}
+      >
+        {/* Feed Header */}
+        <div className="fixed top-0 left-0 right-0 md:absolute md:left-0 md:right-0 z-50 p-4 flex items-center justify-between pointer-events-none">
+          <button 
+            onClick={() => navigate("/")}
+            className="p-2.5 bg-black/40 backdrop-blur-md rounded-full pointer-events-auto border border-white/10 hover:bg-black/60 transition-all"
+          >
+            <ChevronLeft className="text-white w-6 h-6" />
+          </button>
+          <div className="flex gap-1 bg-black/40 backdrop-blur-md rounded-full p-1 pointer-events-auto border border-white/10">
+            <button 
+              onClick={() => setActiveTab("friends")}
+              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
+                activeTab === "friends" 
+                  ? "bg-white text-black" 
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <Users className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
+              Friends
+            </button>
+            <button 
+              onClick={() => setActiveTab("foryou")}
+              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
+                activeTab === "foryou" 
+                  ? "bg-white text-black" 
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <Globe className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
+              For You
+            </button>
+          </div>
+          <div className="w-10" />
+        </div>
+
+        {moments.map((moment) => (
+          <MomentPost key={moment.id} moment={moment} />
+        ))}
+      </div>
+
+      {/* ─── DESKTOP DECORATIVE ELEMENTS (SIDE) ─── */}
+      <div className="hidden lg:flex absolute left-10 top-1/2 -translate-y-1/2 flex-col gap-6 max-w-[300px]">
+        <h2 className="text-white text-4xl font-black leading-tight">
+          Every Moment <br /> <span className="text-[#DF2020]">Is A Story.</span>
+        </h2>
+        <p className="text-white/40 text-sm font-medium leading-relaxed">
+          Scroll through thousands of stories from Indomie fans across the globe. Share your own and win!
+        </p>
+      </div>
     </div>
   );
 };
@@ -136,11 +136,12 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
       navigator.share({ title: "Indomie Moment", text: moment.caption, url: shareUrl });
     } else {
       navigator.clipboard?.writeText(shareUrl);
+      alert("Link copied to clipboard!");
     }
   };
 
   return (
-    <div className="h-[100dvh] w-full snap-start relative flex flex-col items-center justify-center bg-zinc-900 group">
+    <div className="h-[100dvh] w-full snap-start relative flex flex-col items-center justify-center bg-zinc-900 overflow-hidden">
       {/* Media Content */}
       <div className="absolute inset-0 flex items-center justify-center" onClick={handleDoubleTap}>
         <img 
@@ -148,7 +149,7 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
           alt={moment.caption}
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
       </div>
 
       {/* Double Tap Heart Animation */}
@@ -165,74 +166,79 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
         )}
       </AnimatePresence>
 
-      {/* Side Actions */}
-      <div className="absolute right-4 bottom-24 flex flex-col gap-6 items-center z-30">
-        <div className="flex flex-col items-center gap-1">
-          <button 
+      {/* Side Actions (Contained inside the phone container) */}
+      <div className="absolute right-4 bottom-20 flex flex-col gap-5 items-center z-30">
+        <div className="flex flex-col items-center gap-1.5">
+          <motion.button 
+            whileTap={{ scale: 0.8 }}
             onClick={() => { setLiked(!liked); toggleLike(moment.id); }}
-            className={`p-3 rounded-full transition-all ${liked ? 'bg-[#E2231A] text-white' : 'bg-black/20 backdrop-blur-md text-white hover:bg-black/40'}`}
+            className={`p-3.5 rounded-full transition-all border border-white/10 ${liked ? 'bg-[#E2231A] text-white shadow-lg shadow-red-500/40' : 'bg-black/40 backdrop-blur-md text-white hover:bg-black/60'}`}
           >
-            <Heart className={`w-7 h-7 ${liked ? 'fill-current' : ''}`} />
-          </button>
-          <span className="text-white text-xs font-bold shadow-sm">{moment.likes + (liked ? 1 : 0)}</span>
+            <Heart className={`w-6 h-6 ${liked ? 'fill-current' : ''}`} />
+          </motion.button>
+          <span className="text-white text-[10px] font-black drop-shadow-md">{moment.likes + (liked ? 1 : 0)}</span>
         </div>
 
-        <div className="flex flex-col items-center gap-1">
-          <button className="p-3 bg-black/20 backdrop-blur-md rounded-full text-white hover:bg-black/40 transition-all">
-            <MessageCircle className="w-7 h-7" />
-          </button>
-          <span className="text-white text-xs font-bold shadow-sm">24</span>
+        <div className="flex flex-col items-center gap-1.5">
+          <motion.button 
+            whileTap={{ scale: 0.8 }}
+            className="p-3.5 bg-black/40 backdrop-blur-md rounded-full text-white border border-white/10 hover:bg-black/60 transition-all"
+          >
+            <MessageCircle className="w-6 h-6" />
+          </motion.button>
+          <span className="text-white text-[10px] font-black drop-shadow-md">24</span>
         </div>
 
-        <div className="flex flex-col items-center gap-1">
-          <button 
+        <div className="flex flex-col items-center gap-1.5">
+          <motion.button 
+            whileTap={{ scale: 0.8 }}
             onClick={handleShare}
-            className="p-3 bg-black/20 backdrop-blur-md rounded-full text-white hover:bg-black/40 transition-all"
+            className="p-3.5 bg-black/40 backdrop-blur-md rounded-full text-white border border-white/10 hover:bg-black/60 transition-all"
           >
-            <Share2 className="w-7 h-7" />
-          </button>
-          <span className="text-white text-xs font-bold shadow-sm">Share</span>
+            <Share2 className="w-6 h-6" />
+          </motion.button>
+          <span className="text-white text-[10px] font-black drop-shadow-md">Share</span>
         </div>
       </div>
 
       {/* Info Content */}
-      <div className="absolute bottom-6 left-4 right-20 z-30 space-y-3">
+      <div className="absolute bottom-6 left-4 right-20 z-30 space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full border-2 border-[#FFD700] p-0.5 overflow-hidden bg-white">
+          <div className="w-12 h-12 rounded-full border-2 border-[#FFD700] p-0.5 overflow-hidden bg-white shadow-lg shadow-black/20">
             <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${moment.userId}`} className="w-full h-full object-cover rounded-full" />
           </div>
           <div className="flex flex-col">
-            <h4 className="text-white font-black text-lg flex items-center gap-1">
-              {moment.userName || moment.fullName || "Indomie Legend"}
-              <span className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-[6px] text-white">✓</span>
-              </span>
+            <h4 className="text-white font-black text-base flex items-center gap-1.5 drop-shadow-md">
+              {moment.userName || "Indomie Legend"}
+              <div className="w-3.5 h-3.5 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-[7px] text-white font-bold">✓</span>
+              </div>
             </h4>
             {moment.location && (
-              <p className="text-white/80 text-xs flex items-center gap-1 font-medium">
-                <MapPin className="w-3 h-3" /> {moment.location}
+              <p className="text-white/80 text-[10px] flex items-center gap-1 font-bold tracking-wide">
+                <MapPin className="w-3 h-3 text-[#DF2020]" /> {moment.location}
               </p>
             )}
           </div>
         </div>
 
-        <p className="text-white text-sm line-clamp-2 pr-4 font-medium leading-relaxed drop-shadow-md">
+        <p className="text-white text-sm md:text-sm font-medium leading-relaxed drop-shadow-md pr-4 line-clamp-3">
           {moment.caption}
         </p>
 
-        <div className="flex items-center gap-2 text-white/90 text-xs bg-white/10 backdrop-blur-md w-fit px-3 py-1.5 rounded-full border border-white/10">
-          <Music className="w-3 h-3 animate-pulse" />
-          <span className="w-32 truncate">Indomie Jollof Style - Special Remix</span>
+        <div className="flex items-center gap-2.5 text-white/90 text-[10px] font-bold bg-white/10 backdrop-blur-md w-fit px-4 py-2 rounded-full border border-white/10 shadow-lg">
+          <Music className="w-3 h-3 animate-pulse text-[#DF2020]" />
+          <span className="max-w-[150px] truncate">Indomie Jollof Style - Original Remix</span>
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 h-0.5 bg-white/20 w-full">
+      {/* Progress Bar (TikTok style) */}
+      <div className="absolute bottom-0 left-0 h-1 bg-white/10 w-full z-40">
         <motion.div 
-          className="h-full bg-[#E2231A]"
+          className="h-full bg-[#DF2020]"
           initial={{ width: "0%" }}
           whileInView={{ width: "100%" }}
-          transition={{ duration: 15 }}
+          transition={{ duration: 15, ease: "linear" }}
         />
       </div>
     </div>
