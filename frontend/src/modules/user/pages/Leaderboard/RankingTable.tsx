@@ -2,7 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import type { LeaderboardItem } from "@/services/types";
-import { getPrizeText, getRankIcon } from "./utils";
+import { getRankIcon } from "./utils";
+
+const getPrizeForRank = (rank: number) => {
+  if (rank === 1) return "Smart TV";
+  if (rank === 2) return "Double Fridge";
+  if (rank === 3) return "Gaming Console";
+  if (rank <= 5) return "Indomie Carton";
+  return "Consolation Prize";
+};
 
 interface RankingTableProps {
   data: LeaderboardItem[];
@@ -52,11 +60,9 @@ export const RankingTable: React.FC<RankingTableProps> = ({ data }) => {
                 <p className="text-[11px] font-medium text-gray-400 truncate mt-0.5 max-w-[120px]">
                   {moment.caption || "Joined the challenge"}
                 </p>
-                {isTop3 && (
-                  <span className="text-[9px] mt-1.5 font-black uppercase tracking-wider text-[#B8860B] bg-yellow-50 px-2 py-0.5 rounded-full inline-block w-fit border border-yellow-200/50">
-                    {getPrizeText(index + 1)}
-                  </span>
-                )}
+                <span className={`text-[9px] mt-1.5 font-black uppercase tracking-wider px-2 py-0.5 rounded-full inline-block w-fit border ${isTop3 ? 'text-[#B8860B] bg-yellow-50 border-yellow-200/50' : 'text-gray-500 bg-gray-50 border-gray-200'}`}>
+                  Won: {getPrizeForRank(index + 1)}
+                </span>
               </div>
 
               {/* Score */}

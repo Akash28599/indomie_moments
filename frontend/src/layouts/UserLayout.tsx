@@ -39,21 +39,28 @@ const UserLayout = () => {
   // So we hide the main Header + Footer for unauthenticated users on the home path.
   const isGuestHomePage = location.pathname === "/" && !isAuthenticated;
 
+  // Hide bottom nav on immersive pages like /moments
+  const isImmersivePage = location.pathname === "/moments";
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header – hidden on guest landing page (LandingPage has its own) */}
+    <div className="h-[100dvh] flex flex-col overflow-hidden">
+      {/* Header – hidden on guest landing page & on mobile for authenticated users */}
       {!isGuestHomePage && <Header config={userHeaderConfig} />}
 
       {/* 🔥 MAIN CONTENT */}
-      <main className="flex-1">
+      <main className="flex-1 min-h-0">
         <Outlet />
       </main>
 
-      {/* Footer – hidden on guest landing page */}
-      {!isGuestHomePage && <Footer config={userFooterConfig} />}
+      {/* Footer – hidden on mobile (BottomNav replaces it), shown on desktop */}
+      {!isGuestHomePage && (
+        <div className="hidden md:block">
+          <Footer config={userFooterConfig} />
+        </div>
+      )}
 
-      {/* Mobile Bottom Navigation – only for authenticated users */}
-      {isAuthenticated && <BottomNav />}
+      {/* Mobile Bottom Navigation – only for authenticated users, hidden on immersive pages */}
+      {isAuthenticated && !isImmersivePage && <BottomNav />}
     </div>
   );
 };

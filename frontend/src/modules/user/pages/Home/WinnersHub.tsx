@@ -44,6 +44,16 @@ const STEPS = [
 const WinnersHub = () => {
   const navigate = useNavigate();
   const [showVideo, setShowVideo] = useState(false);
+  const [selectedState, setSelectedState] = useState("Lagos");
+  const [selectedCity, setSelectedCity] = useState("All");
+
+  const centers = [
+    { state: "Lagos", city: "Surulere", name: "Surulere Hub", address: "45 Adeniran Ogunsanya St, Surulere", supervisor: "Mr. Adebayo", phone: "+234 801 234 5678", mapLink: "https://maps.google.com/?q=45+Adeniran+Ogunsanya+St+Surulere", status: "Open Now", time: "8AM - 6PM" },
+    { state: "Lagos", city: "Ikeja", name: "Ikeja Mega Plaza", address: "Obafemi Awolowo Way, Ikeja", supervisor: "Mrs. Chioma", phone: "+234 802 345 6789", mapLink: "https://maps.google.com/?q=Obafemi+Awolowo+Way+Ikeja", status: "Open Now", time: "9AM - 8PM" },
+    { state: "Lagos", city: "Lekki", name: "Lekki Phase 1", address: "Admiralty Way, Beside City Dia", supervisor: "Mr. Tunde", phone: "+234 803 456 7890", mapLink: "https://maps.google.com/?q=Admiralty+Way+Lekki", status: "Closing Soon", time: "8AM - 5PM" }
+  ];
+
+  const filteredCenters = centers.filter(c => c.state === selectedState && (selectedCity === "All" || c.city === selectedCity));
 
   return (
     <div className="min-h-screen bg-[#FFFCF8] pb-32 font-sans relative overflow-x-hidden">
@@ -167,45 +177,85 @@ const WinnersHub = () => {
 
         {/* ═══ Redemption Centers List ═══ */}
         <section className="mb-12">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-black text-gray-900 italic tracking-tight">Active Centers</h2>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Lagos Region</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Verified Locations</p>
             </div>
-            <button className="text-[10px] font-black text-[#DF2020] uppercase border-b-2 border-red-500 pb-0.5">
-              Change Location
-            </button>
+          </div>
+
+          <div className="flex gap-2 mb-6">
+            <select 
+              value={selectedState} 
+              onChange={e => { setSelectedState(e.target.value); setSelectedCity("All"); }}
+              className="flex-1 bg-white border border-gray-200 text-gray-900 text-sm font-bold rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3 shadow-sm"
+            >
+              <option value="Lagos">Lagos</option>
+              <option value="Abuja">Abuja</option>
+              <option value="Rivers">Rivers</option>
+            </select>
+            <select 
+              value={selectedCity} 
+              onChange={e => setSelectedCity(e.target.value)}
+              className="flex-1 bg-white border border-gray-200 text-gray-900 text-sm font-bold rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3 shadow-sm"
+            >
+              <option value="All">All Cities</option>
+              <option value="Surulere">Surulere</option>
+              <option value="Ikeja">Ikeja</option>
+              <option value="Lekki">Lekki</option>
+            </select>
           </div>
 
           <div className="grid gap-4">
-            {[
-              { name: "Surulere Hub", address: "45 Adeniran Ogunsanya St, Surulere", status: "Open Now", time: "8AM - 6PM" },
-              { name: "Ikeja Mega Plaza", address: "Obafemi Awolowo Way, Ikeja", status: "Open Now", time: "9AM - 8PM" },
-              { name: "Lekki Phase 1", address: "Admiralty Way, Beside City Dia", status: "Closing Soon", time: "8AM - 5PM" }
-            ].map((center, i) => (
+            {filteredCenters.map((center, i) => (
               <motion.div 
                 key={i} 
                 whileHover={{ scale: 1.02 }}
-                className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-red-100 transition-all hover:shadow-2xl hover:shadow-red-900/5"
+                className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col group hover:border-red-100 transition-all hover:shadow-2xl hover:shadow-red-900/5"
               >
-                <div className="flex gap-5 items-center">
-                  <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-red-50 group-hover:text-[#DF2020] transition-colors">
-                    <MapPin className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="font-black text-gray-900 text-sm group-hover:text-[#DF2020] transition-all">{center.name}</h4>
-                    <p className="text-[10px] font-bold text-gray-400 mt-0.5">{center.address}</p>
-                    <div className="flex items-center gap-2 mt-3">
-                       <div className={`w-1.5 h-1.5 rounded-full ${center.status.includes('Open') ? 'bg-green-500' : 'bg-orange-500'}`} />
-                       <span className="text-[9px] font-black text-gray-800 uppercase tracking-wider">{center.status}</span>
-                       <span className="text-[10px] text-gray-300">•</span>
-                       <span className="text-[9px] font-bold text-gray-400 uppercase">{center.time}</span>
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex gap-4 items-center">
+                    <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-hover:bg-red-50 group-hover:text-[#DF2020] transition-colors shrink-0">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-black text-gray-900 text-base group-hover:text-[#DF2020] transition-all leading-tight">{center.name}</h4>
+                      <div className="flex items-center gap-2 mt-1.5">
+                         <div className={`w-1.5 h-1.5 rounded-full ${center.status.includes('Open') ? 'bg-green-500' : 'bg-orange-500'}`} />
+                         <span className="text-[9px] font-black text-gray-800 uppercase tracking-wider">{center.status}</span>
+                         <span className="text-[10px] text-gray-300">•</span>
+                         <span className="text-[9px] font-bold text-gray-400 uppercase">{center.time}</span>
+                      </div>
                     </div>
                   </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-[#DF2020] transition-all group-hover:translate-x-1 shrink-0" />
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-[#DF2020] transition-all group-hover:translate-x-1" />
+                
+                <p className="text-xs font-medium text-gray-500 mb-4 ml-16">{center.address}</p>
+
+                <div className="ml-16 bg-gray-50 rounded-xl p-3 border border-gray-100 flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] text-gray-400 uppercase font-black mb-0.5">Center Supervisor</p>
+                    <p className="text-xs font-bold text-gray-900">{center.supervisor}</p>
+                    <p className="text-[11px] font-bold text-[#DF2020]">{center.phone}</p>
+                  </div>
+                  <a 
+                    href={center.mapLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center bg-white border border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[10px] font-bold text-blue-600 hover:bg-blue-50 transition-colors"
+                  >
+                    View Map
+                  </a>
+                </div>
               </motion.div>
             ))}
+            {filteredCenters.length === 0 && (
+              <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm text-center">
+                <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 font-medium text-sm">No centers found in this location yet.</p>
+              </div>
+            )}
           </div>
         </section>
 
