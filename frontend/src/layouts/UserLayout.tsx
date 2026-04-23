@@ -52,12 +52,7 @@ const UserLayout = () => {
         <Outlet />
       </main>
 
-      {/* Footer – hidden on mobile and immersive pages */}
-      {!isGuestHomePage && !isImmersivePage && (
-        <div className="hidden md:block">
-          <Footer config={userFooterConfig} />
-        </div>
-      )}
+      {/* Footer removed for authenticated views – Header provides all navigation */}
 
       {/* Mobile Bottom Navigation – only for authenticated users, hidden on immersive pages */}
       {isAuthenticated && !isImmersivePage && <BottomNav />}
