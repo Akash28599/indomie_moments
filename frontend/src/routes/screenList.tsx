@@ -1,17 +1,23 @@
-import UserLayout from "../layouts/UserLayout";
-import AdminLayout from "../layouts/AdminLayout";
+import { 
+  Dashboard,
+  LandingPage,
+  LeaderBoard,
+  Profile,
+  SharePage,
+  Upload,
+  IndomieMoments
+} from "../modules/user/pages";
+import { Login } from "../modules/user/auth/login/Login";
+import { Register } from "../modules/user/auth/register/Register";
+import { AdminLogin, AdminRegister, ResetPassword, ForgotPassword } from "../modules/admin/auth";
+import WinnersHub from "../modules/user/pages/Home/WinnersHub";
 import Home from "../modules/user/pages/Home/Home";
 import AdminHome from "../modules/admin/pages/home/AdminHome";
 import Approval from "../modules/admin/pages/approvals/Approval";
 import UserAnalytics from "../modules/admin/pages/users/UserAnalytics";
-import { Moments } from "../modules/user/pages/Moments/MomentFullList";
-import {LeaderBoard} from "../modules/user/pages/Leaderboard/LeaderBoard";
-import {Upload} from "../modules/user/pages/Upload/Upload";
-import Profile from "../modules/user/pages/Profile/Profile";
-import { SharePage } from "../modules/user/pages/Share/SharePage";
-import { AdminLogin, AdminRegister, ResetPassword, ForgotPassword } from "../modules/admin/auth";
-import { Login } from "../modules/user/auth/login/Login";
-import {Register} from "../modules/user/auth/register/Register";
+import UserLayout from "../layouts/UserLayout";
+import AdminLayout from "../layouts/AdminLayout";
+
 import { ProtectedRoute } from "./ProtectedRoute";
 import NotFound from "../modules/common/pages/Notfound";
 import PrivacyPolicy from "../modules/common/pages/PrivacyPolicy";
@@ -40,14 +46,14 @@ export const SCREEN_LIST = [
   element: <UserLayout />,
   isPublic: true,
   children: [
-    { index: true, element: <Home /> }, // ✅ HOME RENDERS
+    { index: true, element: <Home /> },
 
     // 🔐 PROTECTED ROUTES
     {
       path: "moments",
       element: (
         <ProtectedRoute role="user">
-          <Moments />
+          <IndomieMoments />
         </ProtectedRoute>
       ),
     },
@@ -59,12 +65,21 @@ export const SCREEN_LIST = [
         </ProtectedRoute>
       ),
     },
-
     {
       path: "upload",
       element: (
         <ProtectedRoute role="user">
           <Upload />
+        </ProtectedRoute>
+      ),
+    },
+
+
+    {
+      path: "winners-hub",
+      element: (
+        <ProtectedRoute role="user">
+          <WinnersHub />
         </ProtectedRoute>
       ),
     },

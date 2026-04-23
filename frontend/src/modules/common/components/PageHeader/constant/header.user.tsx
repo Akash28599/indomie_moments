@@ -14,7 +14,7 @@ export const userHeaderConfig: HeaderConfig = {
   },
   features: {
     showUploadButton: true,
-    uploadPath: '/upload',
+    uploadPath: '/#upload',
     uploadLabel: 'Upload Moment',
     showProfileLink: true,
     profilePath: '/profile',

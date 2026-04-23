@@ -1,27 +1,16 @@
-import Hero from "./Hero";
-import HowWorks from "./HowWorks";
-import ChampionsList from "./ChampionsList";
-import Prize from "./Prize";
-import MomentsList from "./MomentsList";
-import CTA from "../../../common/components/CTA";
-import { REGISTER_CTA } from "../../../common/constants/cta.constant";
-import { useAuth } from "../../../../hooks/useAuth";
+import { useAppSelector, selectIsAuthenticated } from "../../../../store";
+import LandingPage from "./LandingPage";
+import Dashboard from "./Dashboard";
 
-
-
+/**
+ * Home – Smart router component.
+ * Guest users → LandingPage (single-viewport, high-conversion)
+ * Authenticated users → Dashboard (moments gallery + engagement hub)
+ */
 const Home = () => {
-  const {isAuthenticated} = useAuth();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
-  return (
-    <div>
-      <Hero />
-      <HowWorks />
-      <Prize />
-      <ChampionsList />
-      <MomentsList />
-      <CTA config={REGISTER_CTA} isAuthenticated={isAuthenticated} />
-    </div>
-  );
+  return isAuthenticated ? <Dashboard /> : <LandingPage />;
 };
 
 export default Home;

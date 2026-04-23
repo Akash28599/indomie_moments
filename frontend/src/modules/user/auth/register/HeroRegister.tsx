@@ -33,7 +33,7 @@ export const HeroRegister = ({ onSwitch }: { onSwitch: () => void }) => {
   const [requestOtp, { isLoading: sendingOtp }] = useRequestOtpMutation();
 
   const params = new URLSearchParams(location.search);
-  const redirectTo = params.get("returnUrl") || "/upload";
+  const redirectTo = params.get("returnUrl") || "/#upload";
 
   // If user was redirected here from login because the number is not registered,
   // prefill phone and show an info message.

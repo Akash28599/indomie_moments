@@ -1,3 +1,4 @@
+import React from "react";
 import { PAGE_CONTENT } from "./constant/moments.constants";
 
 

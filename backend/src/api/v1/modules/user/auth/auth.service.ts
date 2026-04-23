@@ -82,18 +82,22 @@ export async function requestOTPService(
       throw new Error(ERROR_MESSAGES.PHONE_NUMBER_REQUIRED);
     }
 
-    if (!validatePhoneNumber(phoneNumber)) {
-      logger.warn("Request OTP: Invalid phone number format", { phoneNumber });
-      throw new Error(ERROR_MESSAGES.INVALID_PHONE_NUMBER);
-    }
-
-    // Step 2: Clean phone number
     let cleanPhone: string;
-    try {
-      cleanPhone = cleanPhoneNumber(phoneNumber);
-    } catch (error) {
-      logger.warn("Request OTP: Invalid phone number", { phoneNumber });
-      throw new Error(ERROR_MESSAGES.INVALID_PHONE_NUMBER);
+    
+    // In dev mode, any digit sequence is fine
+    if (config.otpTestMode) {
+      cleanPhone = phoneNumber.replace(/\D/g, "");
+    } else {
+      if (!validatePhoneNumber(phoneNumber)) {
+        logger.warn("Request OTP: Invalid phone number format", { phoneNumber });
+        throw new Error(ERROR_MESSAGES.INVALID_PHONE_NUMBER);
+      }
+      try {
+        cleanPhone = cleanPhoneNumber(phoneNumber);
+      } catch (error) {
+        logger.warn("Request OTP: Invalid phone number", { phoneNumber });
+        throw new Error(ERROR_MESSAGES.INVALID_PHONE_NUMBER);
+      }
     }
 
     // Step 3: Check if user exists
@@ -110,9 +114,19 @@ export async function requestOTPService(
     }
 
     if (!existingUser && (!fullName || fullName.trim().length < 2)) {
-      // New user without full name — redirect to register
-      logger.warn("Request OTP: New user missing full name", { phone: cleanPhone });
-      throw new Error(ERROR_MESSAGES.USER_NOT_FOUND_REGISTER_FIRST);
+      // ── DEV BYPASS: Auto-create test user when in test mode ──
+      if (config.otpTestMode) {
+        logger.info("Request OTP: TEST MODE — auto-creating user", { phone: cleanPhone });
+        await createUserRepo({
+          phoneNumber: cleanPhone,
+          fullName: "Test User",
+          status: "verified",
+        });
+      } else {
+        // New user without full name — redirect to register
+        logger.warn("Request OTP: New user missing full name", { phone: cleanPhone });
+        throw new Error(ERROR_MESSAGES.USER_NOT_FOUND_REGISTER_FIRST);
+      }
     }
 
     // Step 5: Generate OTP
@@ -196,11 +210,16 @@ export async function verifyOTPService(
 
     // Step 2: Clean phone number
     let cleanPhone: string;
-    try {
-      cleanPhone = cleanPhoneNumber(phoneNumber);
-    } catch (error) {
-      logger.warn("Verify OTP: Invalid phone number", { phoneNumber });
-      throw new Error(ERROR_MESSAGES.INVALID_PHONE_NUMBER);
+    
+    if (config.otpTestMode) {
+      cleanPhone = phoneNumber.replace(/\D/g, "");
+    } else {
+      try {
+        cleanPhone = cleanPhoneNumber(phoneNumber);
+      } catch (error) {
+        logger.warn("Verify OTP: Invalid phone number", { phoneNumber });
+        throw new Error(ERROR_MESSAGES.INVALID_PHONE_NUMBER);
+      }
     }
 
     // Step 3: Get OTP data from database
@@ -213,45 +232,58 @@ export async function verifyOTPService(
       throw new Error(ERROR_MESSAGES.USER_NOT_FOUND_REGISTER_FIRST);
     }
 
-    // Step 5: Check if OTP record exists
-    if (!otpCode || !otpExpiresAt) {
-      logger.warn("Verify OTP: No OTP record found", { userId: user.id });
-      throw new Error(ERROR_MESSAGES.OTP_EXPIRED);
-    }
-
-    // Step 6: Check if OTP is expired (real-time validation)
-    const now = new Date();
-    if (now > otpExpiresAt) {
-      logger.warn("Verify OTP: OTP expired", { userId: user.id });
-      await setUserStatusExpiredRepo(cleanPhone);
-      throw new Error(ERROR_MESSAGES.OTP_EXPIRED);
-    }
-
-    // Step 7: Check attempts limit
-    if (otpAttempts >= MAX_OTP_ATTEMPTS) {
-      logger.warn("Verify OTP: Max attempts exceeded", { userId: user.id, attempts: otpAttempts });
-      await setUserStatusExpiredRepo(cleanPhone);
-      throw new Error(ERROR_MESSAGES.OTP_ATTEMPTS_EXCEEDED);
-    }
-
-    // Step 8: Verify code matches
-    if (otpCode !== code.trim()) {
-      logger.warn("Verify OTP: Code mismatch", {
+    // ── DEV BYPASS: Skip all OTP checks when test mode is enabled ──
+    if (config.otpTestMode) {
+      logger.info("Verify OTP: TEST MODE — accepting any code", {
         userId: user.id,
-        attempts: otpAttempts + 1
+        phone: cleanPhone,
+        codeProvided: code,
       });
-      await incrementOTPAttemptsRepo(cleanPhone);
+      // Clear any pending OTP data so it doesn't pile up
+      await clearOTPRepo(cleanPhone);
+    } else {
+      // ── PRODUCTION: Full OTP validation ──
 
-      const remaining = MAX_OTP_ATTEMPTS - (otpAttempts + 1);
-      if (remaining > 0) {
-        throw new Error(`${ERROR_MESSAGES.INVALID_OTP} ${remaining} attempts remaining.`);
-      } else {
+      // Step 5: Check if OTP record exists
+      if (!otpCode || !otpExpiresAt) {
+        logger.warn("Verify OTP: No OTP record found", { userId: user.id });
+        throw new Error(ERROR_MESSAGES.OTP_EXPIRED);
+      }
+
+      // Step 6: Check if OTP is expired (real-time validation)
+      const now = new Date();
+      if (now > otpExpiresAt) {
+        logger.warn("Verify OTP: OTP expired", { userId: user.id });
+        await setUserStatusExpiredRepo(cleanPhone);
+        throw new Error(ERROR_MESSAGES.OTP_EXPIRED);
+      }
+
+      // Step 7: Check attempts limit
+      if (otpAttempts >= MAX_OTP_ATTEMPTS) {
+        logger.warn("Verify OTP: Max attempts exceeded", { userId: user.id, attempts: otpAttempts });
+        await setUserStatusExpiredRepo(cleanPhone);
         throw new Error(ERROR_MESSAGES.OTP_ATTEMPTS_EXCEEDED);
       }
-    }
 
-    // Step 9: Clear OTP after successful verification
-    await clearOTPRepo(cleanPhone);
+      // Step 8: Verify code matches
+      if (otpCode !== code.trim()) {
+        logger.warn("Verify OTP: Code mismatch", {
+          userId: user.id,
+          attempts: otpAttempts + 1
+        });
+        await incrementOTPAttemptsRepo(cleanPhone);
+
+        const remaining = MAX_OTP_ATTEMPTS - (otpAttempts + 1);
+        if (remaining > 0) {
+          throw new Error(`${ERROR_MESSAGES.INVALID_OTP} ${remaining} attempts remaining.`);
+        } else {
+          throw new Error(ERROR_MESSAGES.OTP_ATTEMPTS_EXCEEDED);
+        }
+      }
+
+      // Step 9: Clear OTP after successful verification
+      await clearOTPRepo(cleanPhone);
+    }
 
     // Step 10: Generate JWT tokens
     const accessToken = jwt.sign(

@@ -46,10 +46,10 @@ export const HERO_GRID = [
 ];
 
 export const HERO_CONTENT = {
-  badge: "Indonesia's Best Noodle 🇮🇩",
-  title: "Show Off Your Indomie Moment! ",
-  highlight: " Win Big Every Week  🎉",
+  badge: "Indomie Global Campaign 🌍",
+  title: "Win 3 Million Naira ",
+  highlight: "Every Single Week! 🏆",
   subtitle:
-    "Snap your favorite Indomie creation, share it, collect likes, and win awesome prizes weekly!",
+    "Are you the next Indomie superstar? Share your creative Indomie recipes, gather votes, and stand a chance to win millions in cash and prizes!",
   backdrop: heroBackdrop,
 };

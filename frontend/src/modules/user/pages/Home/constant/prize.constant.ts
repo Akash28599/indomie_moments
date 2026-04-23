@@ -34,31 +34,34 @@ export const PRIZE_DECORATIONS = [
 ];
 
 export const PRIZE_HEADER = {
-  title: "🎁 Amazing Prizes Await!",
-  subtitle: "Fresh winners crowned every Sunday!",
-  footerNote: "Leaderboard resets every Sunday at 11:59 PM",
+  title: "GRAND PRIZES TO BE WON",
+  subtitle: "Weekly rewards for our most creative fans!",
+  footerNote: "Next winner announced this Sunday!",
 };
 
 export const PRIZE_PRIZES = [
   {
-    rank: "1st",
-    rankColor: "text-[#FFD700]",
-    title: "Grand Prize",
+    rank: "💰",
+    rankColor: "text-green-500",
+    title: "Weekly Cash Rewards",
     amount: "1,000,000",
-    bonus: "+ 1 Year Supply of Indomie",
+    tag: "UP TO 1M",
+    bonus: "Direct bank transfer to top 10 winners",
   },
   {
-    rank: "2nd",
-    rankColor: "text-gray-400",
-    title: "Second Prize",
-    amount: "500,000",
-    bonus: "+ 6 Month Supply of Indomie",
+    rank: "📱",
+    rankColor: "text-blue-500",
+    title: "Latest Tech Gadgets",
+    amount: "LATEST TECH",
+    tag: "GADGETS",
+    bonus: "Smartphones, Tablets & Wearables",
   },
   {
-    rank: "3rd",
-    rankColor: "text-orange-600",
-    title: "Third Prize",
-    amount: "250,000",
-    bonus: "+ 3 Month Supply of Indomie",
+    rank: "👩‍🍳",
+    rankColor: "text-orange-500",
+    title: "Kitchen Makeovers",
+    amount: "FULL SET",
+    tag: "LIFESTYLE",
+    bonus: "Complete Indomie branded kitchen sets",
   },
 ];

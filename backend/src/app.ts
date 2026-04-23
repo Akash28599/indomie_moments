@@ -15,7 +15,19 @@ export function createApp() {
   app.set("trust proxy", 1);
   app.use(
     cors({
-      origin: config.app.frontendBaseUrl,
+      origin: (origin, callback) => {
+        // In development, allow localhost/127.0.0.1 on any port
+        if (config.isDevelopment && (!origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin))) {
+          callback(null, true);
+        } else {
+          // In production, fallback to strict match
+          if (origin === config.app.frontendBaseUrl || !origin) {
+            callback(null, true);
+          } else {
+            callback(new Error('Not allowed by CORS'));
+          }
+        }
+      },
       credentials: true,
     }),
   );

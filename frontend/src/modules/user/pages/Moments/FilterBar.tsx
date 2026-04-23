@@ -1,3 +1,4 @@
+import React from "react";
 import { Filter, TrendingUp } from 'lucide-react';
 import type { FilterType } from './types/moments';
 import { FILTER_BUTTONS } from './constant/moments.constants';

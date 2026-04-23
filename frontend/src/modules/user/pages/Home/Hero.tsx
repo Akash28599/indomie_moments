@@ -44,7 +44,7 @@ const Hero = () => {
               {isAuthenticated ? (
                 <AppButton
                   label="Upload Your Moment"
-                  to="/upload"
+                  to="/#upload"
                   icon={<Upload size={20} />}
                   variant="primary"
                 />

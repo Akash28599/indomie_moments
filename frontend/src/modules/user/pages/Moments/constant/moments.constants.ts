@@ -37,5 +37,5 @@ export const PAGE_CONTENT = {
   ctaTitle: 'Got an Amazing Indomie Moment?',
   ctaSubtitle: "Share it now and compete for this week's prizes!",
   ctaButton: 'Upload Your Moment',
-  ctaLink: '/upload',
+  ctaLink: '/#upload',
 };

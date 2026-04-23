@@ -146,7 +146,7 @@ const Profile = () => {
 
         {/* Upload New Moment CTA */}
         <Link
-          to="/upload"
+          to="/#upload"
           className="block bg-gradient-to-r from-[#E2231A] to-[#c41e16] text-white rounded-3xl shadow-xl p-6 mb-8 hover:shadow-2xl transition-all group"
         >
           <div className="flex items-center justify-between">
@@ -231,7 +231,7 @@ const Profile = () => {
                 Share your first Indomie moment and start collecting likes!
               </p>
               <Link
-                to="/upload"
+                to="/#upload"
                 className="inline-block bg-[#E2231A] text-white px-8 py-3 rounded-full font-bold hover:bg-[#c41e16] transition-colors"
               >
                 Upload Your First Moment

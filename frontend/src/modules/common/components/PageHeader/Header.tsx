@@ -3,7 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -23,6 +23,7 @@ export interface HeaderProps {
 
 export const Header = ({ config }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -35,6 +36,14 @@ export const Header = ({ config }: HeaderProps) => {
   const role = activeUser?.role;
 
   const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -65,158 +74,106 @@ export const Header = ({ config }: HeaderProps) => {
         return false;
       }
       return true;
-    },
+    }
   );
 
   return (
     <>
-      <Link
-        to="/"
-        className="md:flex hidden items-center gap-3  z-99 top-0 fixed"
-      >
-        <img src={indomieLogo_Float} alt="Indomie" className="h-25 w-auto" />
-      </Link>
+      <header className={`bg-white sticky top-0 z-50 transition-all duration-300 border-b border-gray-100 h-16 sm:h-20`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full relative z-10">
+          <div className="flex justify-between items-center h-full">
+            
+            {/* Mobile Header (Client UI Match) */}
+            <div className="flex w-full items-center justify-between md:hidden py-2">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" className="w-full h-full object-cover" />
+                </div>
+                <h1 className="text-[#b91c1c] font-black text-lg leading-none tracking-tight">
+                  Indomie<br/>Moments
+                </h1>
+              </div>
 
-      <header className="bg-white shadow-md sticky top-0 z-50 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link
-              to="/"
-              className="flex items-center gap-3 md:opacity-0 opacity-100"
-            >
-              <img src={indomieLogo} alt="Indomie" className="h-22 w-auto" />
-            </Link>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              {filteredLinks.map((link: HeaderNavigationLink) => {
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={`flex items-center gap-2 hover:text-[#E2231A] transition-colors ${
-                      isActive(link.path)
-                        ? "text-[#E2231A] font-bold"
-                        : "text-gray-700"
-                    }`}
-                  >
-                    {Icon && <Icon sx={{ fontSize: 16 }} />}
-                    {link.label}
-                  </Link>
-                );
-              })}
-
-              {
-                isAuthenticated && (
-                  <div className="flex items-center gap-4">
-                    {config.features?.showUploadButton && (
-                      <Link
-                        to={config.features.uploadPath!}
-                        className="bg-[#E2231A] text-white px-6 py-2 rounded-full hover:bg-[#c41e16]"
-                      >
-                        {config.features.uploadLabel}
-                      </Link>
-                    )}
-
-                    {activeUser && (
-                      <Link
-                        to={role === "admin" ? "/admin" : "/profile"}
-                        className="flex items-center gap-2 text-gray-700 hover:text-[#E2231A] transition-colors"
-                      >
-                        <PersonIcon sx={{ fontSize: 16 }} />
-                        <span className="text-sm font-semibold">
-                          {activeUser.fullName || activeUser.email}
-                        </span>
-                      </Link>
-                    )}
-
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-2  text-gray-600 px-5 py-2 rounded-full font-bold text-sm cursor-pointer"
-                    >
-                      <LogoutIcon sx={{ fontSize: 18 }} />
-                    </button>
-                  </div>
-                )
-                // : (
-                //   <div className="flex items-center gap-3">
-                //     <Link
-                //       to={config.authConfig.loginPath}
-                //       className="text-gray-700 hover:text-[#E2231A]"
-                //     >
-                //       Login
-                //     </Link>
-                //     <Link
-                //       to={config.authConfig.registerPath}
-                //       className="bg-[#FFD700] text-gray-900 px-6 py-2 rounded-full hover:bg-[#ffd000]"
-                //     >
-                //       {config.authConfig.registerLabel}
-                //     </Link>
-                //   </div>
-                // )
-              }
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-gray-700"
-            >
-              {mobileMenuOpen ? (
-                <CloseIcon sx={{ fontSize: 24 }} />
+              {isAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className="bg-[#FFD700] hover:bg-[#FACC15] text-black font-black text-xs px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm transition-transform active:scale-95"
+                >
+                  Log Out
+                </button>
               ) : (
-                <MenuIcon sx={{ fontSize: 24 }} />
+                <Link
+                  to={config.authConfig.loginPath}
+                  className="bg-[#DF2020] text-white px-4 py-1.5 rounded-full hover:bg-[#c41e16] transition-all text-xs font-black uppercase tracking-widest shadow-sm"
+                >
+                  LOGIN
+                </Link>
               )}
-            </button>
-          </div>
+            </div>
 
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t">
-              <nav className="flex flex-col space-y-4">
-                {config.navigationLinks.map((link: HeaderNavigationLink) => {
-                  const Icon = link.icon;
+            {/* Desktop Navigation (Hidden on Mobile) */}
+            <div className="hidden md:flex justify-between items-center w-full">
+              <Link to="/" className="flex items-center gap-3">
+                <img src={indomieLogo} alt="Indomie" className="h-10 w-auto" />
+              </Link>
+              <nav className="flex items-center space-x-10">
+                {filteredLinks.map((link: HeaderNavigationLink) => {
                   return (
                     <Link
                       key={link.path}
                       to={link.path}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-2 ${
-                        isActive(link.path)
-                          ? "text-[#E2231A] font-bold"
-                          : "text-gray-700"
+                      className={`relative py-2 text-sm font-black tracking-widest uppercase transition-all duration-300 group ${
+                        isActive(link.path) ? "text-[#DF2020]" : "text-gray-400 hover:text-gray-900"
                       }`}
                     >
-                      {Icon && <Icon sx={{ fontSize: 16 }} />}
                       {link.label}
+                      <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-[#DF2020] transition-transform duration-300 origin-left ${
+                        isActive(link.path) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-50"
+                      }`} />
                     </Link>
                   );
                 })}
 
-                {isAuthenticated ? (
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="flex items-center gap-2 text-gray-600 hover:text-[#E2231A]"
-                  >
-                    <LogoutIcon sx={{ fontSize: 16 }} />
-                    Logout
-                  </button>
-                ) : (
-                  <Link
-                    to={config.authConfig.loginPath}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                )}
+                <div className="flex items-center gap-8 pl-8 border-l border-gray-100 h-10">
+                  {isAuthenticated ? (
+                    <>
+                      {config.features?.showUploadButton && (
+                        <Link
+                          to={config.features.uploadPath!}
+                          className="bg-[#DF2020] text-white px-8 py-3 rounded-2xl hover:bg-[#c41e16] transition-all shadow-xl shadow-red-200 text-xs font-black uppercase tracking-widest"
+                        >
+                          {config.features.uploadLabel}
+                        </Link>
+                      )}
+
+                      <Link
+                        to={role === "admin" ? "/admin" : "/profile"}
+                        className="flex items-center gap-3 group"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden border border-gray-200 group-hover:border-[#DF2020] transition-colors">
+                          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" className="w-full h-full object-cover" />
+                        </div>
+                      </Link>
+
+                      <button
+                        onClick={handleLogout}
+                        className="bg-[#FFD700] hover:bg-[#FACC15] text-black font-black text-xs px-4 py-2 rounded-full flex items-center gap-1.5 shadow-sm transition-transform active:scale-95"
+                      >
+                        Log Out
+                      </button>
+                    </>
+                  ) : (
+                      <Link
+                        to={config.authConfig.loginPath}
+                        className="bg-[#DF2020] text-white px-8 py-3 rounded-2xl hover:bg-[#c41e16] transition-all focus:outline-none focus:ring-4 focus:ring-red-100"
+                      >
+                        LOGIN
+                      </Link>
+                  )}
+                </div>
               </nav>
             </div>
-          )}
+          </div>
         </div>
       </header>
     </>

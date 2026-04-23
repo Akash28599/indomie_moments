@@ -4,48 +4,53 @@ import { useCountdown } from "../../../../hooks/useCountdown";
 
 interface TimerProps {
   targetDate?: Date;
-  title?: string;
-  resetInfo?: string;
-  expiredMessage?: string;
 }
 
-export const Timer: React.FC<TimerProps> = ({
-  targetDate,
-  title = "Time Until Next Reset",
-  resetInfo = "Leaderboard resets every Sunday at 11:59 PM",
-  expiredMessage = "Leaderboard has reset!",
-}) => {
+export const Timer: React.FC<TimerProps> = ({ targetDate }) => {
   const countdown = useCountdown(targetDate ?? new Date());
-  const { days, hours, minutes, seconds, isExpired } = countdown;
+  const { days, hours, minutes, isExpired } = countdown;
+
+  if (isExpired) {
+    return (
+      <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 text-center">
+        <p className="font-bold text-[#E2231A]">Leaderboard has reset!</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-gradient-to-r from-[#E2231A] to-[#c41e16] rounded-3xl p-8 text-white mb-8 text-center">
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <Clock className="w-6 h-6" />
-        <h2 className="text-2xl font-bold">{isExpired ? expiredMessage : title}</h2>
-      </div>
-
-      {!isExpired && (
-        <div className="flex justify-center gap-6">
-          {(["days", "hours", "minutes", "seconds"] as const).map((unit) => (
-            <div key={unit}>
-              <div className="text-5xl font-black">
-                {{
-                  days: days,
-                  hours: hours,
-                  minutes: minutes,
-                  seconds: seconds,
-                }[unit]}
-              </div>
-              <div className="text-sm text-white/80 mt-1">
-                {unit.charAt(0).toUpperCase() + unit.slice(1)}
-              </div>
-            </div>
-          ))}
+    <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 relative overflow-hidden">
+      <div className="flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-3 text-gray-900">
+          <div className="bg-red-50 p-2.5 rounded-xl">
+            <Clock className="w-5 h-5 text-[#E2231A] animate-pulse" />
+          </div>
+          <div>
+            <h3 className="text-xs font-black uppercase text-gray-400 tracking-wider">Reset In</h3>
+            <p className="text-sm font-bold text-gray-900">New Challenge Soon</p>
+          </div>
         </div>
-      )}
 
-      <p className="text-sm text-white/90 mt-6">{resetInfo}</p>
+        <div className="flex items-center gap-1.5 text-[#E2231A]">
+          {/* Days */}
+          <div className="flex flex-col items-center">
+            <span className="text-xl font-black bg-red-50 px-2.5 py-1 rounded-lg min-w-[36px] text-center">{days}</span>
+            <span className="text-[10px] font-bold mt-1 uppercase text-gray-400">d</span>
+          </div>
+          <span className="text-xl font-black mb-4">:</span>
+          {/* Hours */}
+          <div className="flex flex-col items-center">
+            <span className="text-xl font-black bg-red-50 px-2.5 py-1 rounded-lg min-w-[36px] text-center">{String(hours).padStart(2, '0')}</span>
+            <span className="text-[10px] font-bold mt-1 uppercase text-gray-400">h</span>
+          </div>
+          <span className="text-xl font-black mb-4">:</span>
+          {/* Minutes */}
+          <div className="flex flex-col items-center">
+            <span className="text-xl font-black bg-red-50 px-2.5 py-1 rounded-lg min-w-[36px] text-center">{String(minutes).padStart(2, '0')}</span>
+            <span className="text-[10px] font-bold mt-1 uppercase text-gray-400">m</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -20,9 +20,9 @@ export const userFooterConfig: FooterConfig = {
       title: 'Explore',
       links: [
         { label: 'Home', href: '/', internal: true },
-        { label: 'Indomie Moments', href: '/moments', internal: true },
+        { label: 'Moments', href: '/moments', internal: true },
         { label: 'Leaderboard', href: '/leaderboard', internal: true },
-        { label: 'Upload', href: '/upload', internal: true },
+        { label: 'Upload Moment', href: '/upload', internal: true },
       ],
     },
     // {
