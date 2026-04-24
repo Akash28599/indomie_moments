@@ -69,6 +69,19 @@ const LandingPage = () => {
           </button>
         </header>
 
+        {/* Promotional Image / Video Area */}
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="shrink-0 px-5 md:px-10 mb-6 md:mb-10"
+        >
+          <div className="w-full h-32 md:h-64 rounded-3xl bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 border-2 border-dashed border-red-200 flex items-center justify-center relative overflow-hidden group">
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity" />
+            <p className="text-[10px] md:text-sm font-black text-red-400 uppercase tracking-[0.3em] relative z-10">Promotional Showcase</p>
+          </div>
+        </motion.div>
+
         {/* ─── Hero Content Area ─── */}
         <div className="flex-1 flex flex-col md:flex-row min-h-0 px-5 md:px-10 gap-8 md:gap-16">
           
@@ -104,19 +117,6 @@ const LandingPage = () => {
 
           {/* RIGHT SIDE: Images & Prizes */}
           <div className="flex-1 flex flex-col justify-center min-h-0">
-            {/* Promotional Image / Video Area */}
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="shrink-0 mb-6 md:mb-10"
-            >
-              <div className="w-full h-36 md:h-64 rounded-3xl bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 border-2 border-dashed border-red-200 flex items-center justify-center relative overflow-hidden group">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity" />
-                <p className="text-[10px] md:text-sm font-black text-red-400 uppercase tracking-[0.3em] relative z-10">Promotional Showcase</p>
-              </div>
-            </motion.div>
-
             {/* Prizes Section */}
             <section className="shrink-0">
               <h2 className="text-[9px] md:text-xs font-black text-red-400 uppercase tracking-[0.2em] mb-4">

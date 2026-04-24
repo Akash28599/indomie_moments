@@ -114,7 +114,7 @@ export const Header = ({ config }: HeaderProps) => {
             {/* Desktop Navigation (Hidden on Mobile) */}
             <div className="hidden md:flex justify-between items-center w-full">
               <Link to="/" className="flex items-center gap-3">
-                <img src={indomieLogo} alt="Indomie" className="h-10 w-auto" />
+                <img src={indomieLogo} alt="Indomie" className="h-12 md:h-16 w-auto" />
               </Link>
               <nav className="flex items-center space-x-10">
                 {filteredLinks.map((link: HeaderNavigationLink) => {

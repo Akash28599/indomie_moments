@@ -93,25 +93,25 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="bg-[#FDFCF9] min-h-screen md:h-auto font-sans flex flex-col">
+    <div className="bg-[#FDFCF9] h-screen md:h-auto font-sans flex flex-col overflow-hidden">
       
       {/* 
         Main container: 
         - On mobile: h-[100dvh], overflow-hidden, flex-col
         - On desktop: auto height, padding-y, centered max-width
       */}
-      <div className="flex-1 max-w-md md:max-w-6xl mx-auto w-full px-4 pt-3 md:pt-10 pb-20 md:pb-16 flex flex-col md:flex-row gap-6 md:gap-12">
+      <div className="flex-1 max-w-md md:max-w-6xl mx-auto w-full px-4 pt-1 md:pt-10 pb-4 md:pb-16 flex flex-col md:flex-row gap-2 md:gap-12 overflow-hidden">
         
         {/* LEFT COLUMN: Feed & Info (Priority on Mobile) */}
-        <div className="flex-1 flex flex-col gap-4 md:gap-8 min-w-0">
+        <div className="flex-initial md:flex-1 flex flex-col gap-4 md:gap-8 min-w-0">
           
           {/* ═══ SECTION: INDOMIE MOMENTS (Fading Carousel) ═══ */}
           <section className="shrink-0">
-            <h2 className="text-[9px] md:text-xs font-black text-gray-500 uppercase tracking-widest mb-2 md:mb-4">
+            <h2 className="text-[8px] md:text-xs font-black text-gray-500 uppercase tracking-widest mb-1 md:mb-4">
               INDOMIE MOMENTS
             </h2>
             
-            <div className="relative w-full h-32 md:h-64 rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-lg bg-black group">
+            <div className="relative w-full h-24 md:h-64 rounded-xl md:rounded-[2.5rem] overflow-hidden shadow-lg bg-black group">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentMomentIndex}
@@ -124,154 +124,82 @@ const Dashboard = () => {
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               </AnimatePresence>
-              <div className="absolute inset-x-0 bottom-0 p-4 md:p-8 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-between">
+              <div className="absolute inset-x-0 bottom-0 p-2 md:p-8 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-between">
                   <div>
-                    <p className="text-white font-black text-xs md:text-2xl mb-1">{FEATURED_MOMENTS[currentMomentIndex].title}</p>
-                    <p className="text-white/60 text-[8px] md:text-xs uppercase font-bold tracking-widest">Featured Story</p>
+                    <p className="text-white font-black text-[10px] md:text-2xl mb-0">{FEATURED_MOMENTS[currentMomentIndex].title}</p>
+                    <p className="text-white/60 text-[6px] md:text-xs uppercase font-bold tracking-widest tracking-tight">Featured Story</p>
                   </div>
                   <motion.div 
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => navigate("/moments")}
-                    className="w-8 h-8 md:w-14 md:h-14 rounded-full bg-white text-black flex items-center justify-center cursor-pointer shadow-xl transition-all"
+                    className="w-6 h-6 md:w-14 md:h-14 rounded-full bg-white text-black flex items-center justify-center cursor-pointer shadow-xl transition-all"
                   >
-                      <Plus className="w-4 h-4 md:w-6 md:h-6" />
+                      <Plus className="w-3.5 h-3.5 md:w-6 md:h-6" />
                   </motion.div>
               </div>
             </div>
           </section>
 
-          {/* ═══ SECTION: HOW TO PARTICIPATE ═══ */}
+          {/* ═══ SECTION: HOW TO PARTICIPATE (Compact) ═══ */}
           <section className="shrink-0">
-            <h2 className="text-[9px] md:text-xs font-black text-gray-500 uppercase tracking-widest mb-3 md:mb-6">
+            <h2 className="text-[8px] md:text-xs font-black text-gray-500 uppercase tracking-widest mb-1 md:mb-6">
               How to participate?
             </h2>
-            
-            <div className="grid grid-cols-2 gap-3 md:gap-6">
+            <div className="grid grid-cols-2 gap-2 md:gap-6">
               <motion.div 
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate("/winners-hub")}
-                className="bg-[#FACC15] rounded-2xl md:rounded-3xl p-4 md:p-8 h-24 md:h-48 flex flex-col justify-between shadow-lg shadow-yellow-200/50 cursor-pointer group relative overflow-hidden"
+                className="bg-[#FACC15] rounded-xl md:rounded-3xl p-2 md:p-8 h-14 md:h-48 flex items-center md:flex-col md:justify-between gap-2 shadow-sm md:shadow-lg md:shadow-yellow-200/50 cursor-pointer relative overflow-hidden group"
               >
-                <div className="flex justify-between items-start z-10">
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-xl bg-black/10 flex items-center justify-center text-black">
-                    <Gift className="w-4 h-4 md:w-6 md:h-6" />
-                  </div>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowVideo(true);
-                    }}
-                    className="w-8 h-8 md:w-12 md:h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-black hover:bg-white/40 transition-all"
-                  >
-                    <Play className="w-3.5 h-3.5 md:w-5 md:h-5 fill-black" />
-                  </button>
+                <div className="w-7 h-7 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-black/10 flex items-center justify-center text-black shrink-0">
+                  <Gift className="w-4 h-4 md:w-6 md:h-6" />
                 </div>
-                <div className="z-10">
-                  <h3 className="font-black text-slate-900 text-[11px] md:text-lg mb-0.5">Redemption Center</h3>
-                  <p className="text-[8px] md:text-xs font-bold text-slate-900/40 uppercase">Claim your rewards</p>
+                <div>
+                  <h3 className="font-black text-slate-900 text-[9px] md:text-lg leading-tight mb-0.5">Redemption Center</h3>
+                  <p className="text-[6px] md:text-xs font-bold text-slate-900/40 uppercase">Claim Rewards</p>
                 </div>
-                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors" />
+                <div className="hidden md:block absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors" />
               </motion.div>
 
               <motion.div 
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate("/moments")}
-                className="bg-white border border-slate-100 rounded-2xl md:rounded-3xl p-4 md:p-8 h-24 md:h-48 flex flex-col justify-between shadow-xl shadow-slate-200/20 cursor-pointer relative overflow-hidden group"
+                className="bg-white border border-slate-100 rounded-xl md:rounded-3xl p-2 md:p-8 h-14 md:h-48 flex items-center md:flex-col md:justify-between gap-2 shadow-sm md:shadow-xl md:shadow-slate-200/20 cursor-pointer relative overflow-hidden group"
               >
-                 <div className="z-10">
-                      <div className="w-8 h-8 md:w-12 md:h-12 rounded-xl bg-pink-50 flex items-center justify-center text-[#DF2020]">
-                          <Flame className="w-4 h-4 md:w-6 md:h-6 fill-[#DF2020]" />
-                      </div>
+                 <div className="w-7 h-7 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-pink-50 flex items-center justify-center text-[#DF2020] shrink-0">
+                    <Flame className="w-4 h-4 md:w-6 md:h-6 fill-[#DF2020]" />
                  </div>
-                 <div className="z-10">
-                      <h3 className="font-black text-slate-900 text-[11px] md:text-lg mb-0.5">Share & Win</h3>
-                      <p className="text-[8px] md:text-xs font-bold text-slate-400 uppercase">Up to 3M Naira / Week</p>
+                 <div>
+                    <h3 className="font-black text-slate-900 text-[9px] md:text-lg leading-tight mb-0.5">Share & Win</h3>
+                    <p className="text-[6px] md:text-xs font-bold text-slate-400 uppercase">3M Weekly</p>
                  </div>
-                 <div className="absolute top-0 right-0 w-24 h-24 bg-pink-50/50 blur-3xl group-hover:bg-pink-100/50 transition-colors" />
+                 <div className="hidden md:block absolute top-0 right-0 w-24 h-24 bg-pink-50/50 blur-3xl group-hover:bg-pink-100/50 transition-colors" />
               </motion.div>
             </div>
           </section>
+
         </div>
 
         {/* RIGHT COLUMN: User Interaction & Activity (Dashboard feel) */}
-        <div className="flex-1 flex flex-col gap-4 md:gap-8 min-w-0 md:max-w-sm">
+        <div className="flex-initial md:flex-1 flex flex-col gap-4 md:gap-8 min-w-0 md:max-w-sm">
           
-          {/* ═══ SECTION: YOUR RECENT MOMENT ═══ */}
-          {submittedMoment && (
-            <motion.section 
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              className="shrink-0"
-            >
-              <h2 className="text-[9px] md:text-xs font-black text-[#DF2020] uppercase tracking-widest mb-3 md:mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#DF2020] animate-pulse" />
-                Active Moment
-              </h2>
-              <div className="bg-white rounded-3xl p-4 md:p-6 shadow-2xl shadow-slate-200/50 border border-slate-100">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden shrink-0 shadow-inner">
-                    <img src={submittedMoment.image} className="w-full h-full object-cover" alt="Your Moment" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] md:text-sm font-bold text-slate-800 line-clamp-2 italic mb-2">
-                      "{submittedMoment.story}"
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1.5 bg-pink-50 px-2 py-1 rounded-lg">
-                        <Heart className="w-3 h-3 text-[#DF2020] fill-[#DF2020]" />
-                        <span className="text-[10px] md:text-xs font-black text-[#DF2020]">{submittedMoment.likes} Likes</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-100">
-                    {submittedMoment.status === 'review' ? (
-                      <>
-                        <Clock className="w-4 h-4 text-orange-500 animate-pulse" />
-                        <span className="text-[9px] md:text-[10px] font-bold text-orange-600 uppercase">Under Review (AI)</span>
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-[9px] md:text-[10px] font-bold text-green-600 uppercase">Moment Approved!</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  {submittedMoment.status === 'approved' && (
-                    <div className="flex flex-col gap-2">
-                      <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center mb-1">Share to earn more likes</p>
-                      <div className="grid grid-cols-3 gap-2">
-                        <button className="bg-[#1877F2] text-white py-2 rounded-lg text-[9px] font-black hover:bg-blue-700 transition-colors">Facebook</button>
-                        <button className="bg-[#25D366] text-white py-2 rounded-lg text-[9px] font-black hover:bg-green-600 transition-colors">WhatsApp</button>
-                        <button className="bg-black text-white py-2 rounded-lg text-[9px] font-black hover:bg-slate-800 transition-colors">X / Twitter</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.section>
-          )}
-
-          {/* ═══ SECTION: SHARE YOUR MOMENT ═══ */}
+          {/* ═══ SECTION: SHARE YOUR MOMENT (Compact) ═══ */}
           <motion.section 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 shrink-0"
+            className="bg-white rounded-2xl md:rounded-[2.5rem] p-3 md:p-8 shadow-xl border border-slate-100 shrink-0"
           >
-            <div className="flex items-center gap-2 mb-4 md:mb-6">
-              <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-[#DF2020] flex items-center justify-center text-white">
-                  <Edit3 className="w-3.5 h-3.5 md:w-5 md:h-5" />
+            <div className="flex items-center gap-2 mb-2 md:mb-6">
+              <div className="w-5 h-5 md:w-8 md:h-8 rounded bg-[#DF2020] flex items-center justify-center text-white">
+                  <Edit3 className="w-3 h-3 md:w-5 md:h-5" />
               </div>
-              <h2 className="font-black text-slate-800 text-xs md:text-base uppercase tracking-wider">Share New Moment</h2>
+              <h2 className="font-black text-slate-800 text-[10px] md:text-base uppercase tracking-wider">Share New Moment</h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-2 md:space-y-4">
               <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -282,14 +210,14 @@ const Dashboard = () => {
               
               <div 
                 onClick={handleImageClick}
-                className="w-full border-2 border-dashed border-pink-200 bg-pink-50/30 rounded-2xl h-24 md:h-40 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-pink-50 transition-colors group overflow-hidden"
+                className="w-full border border-dashed border-pink-200 bg-pink-50/30 rounded-xl md:rounded-2xl h-24 md:h-40 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-pink-50 transition-colors group overflow-hidden"
               >
                 {selectedImage ? (
                   <img src={selectedImage} className="w-full h-full object-cover" alt="Selected" />
                 ) : (
                   <>
-                      <UploadCloud className="w-6 h-6 md:w-10 md:h-10 text-[#DF2020] group-hover:scale-110 transition-transform" />
-                      <p className="text-[10px] md:text-sm font-black text-slate-600">Tap to Upload Photo</p>
+                      <UploadCloud className="w-4 h-4 md:w-10 md:h-10 text-[#DF2020] group-hover:scale-110 transition-transform" />
+                      <p className="text-[8px] md:text-sm font-black text-slate-600">Tap to Upload Photo</p>
                   </>
                 )}
               </div>
@@ -297,30 +225,85 @@ const Dashboard = () => {
               <textarea 
                   value={story}
                   onChange={(e) => setStory(e.target.value)}
-                  placeholder="Explain your Indomie vibe... (Required)"
+                  placeholder="Explain vibe... (Required)"
                   required
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs md:text-sm font-medium text-slate-900 placeholder-slate-300 focus:outline-none focus:border-[#DF2020] transition-all h-20 md:h-28 resize-none shadow-inner"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-lg md:rounded-xl px-3 py-2 md:px-4 md:py-3 text-[10px] md:text-sm font-medium text-slate-900 placeholder-slate-300 focus:outline-none h-16 md:h-28 resize-none shadow-inner"
               />
-
-              <div className="bg-[#F0F7FF] border border-[#E0EFFF] rounded-xl px-4 py-3 flex items-center gap-3">
-                <Info className="w-4 h-4 md:w-5 md:h-5 text-blue-500 shrink-0" />
-                <p className="text-[9px] md:text-xs font-bold text-blue-600 leading-tight">
-                  Submission grants <span className="font-extrabold text-[#DF2020]">50 Points</span> and a Silver Scratch Card instantly!
-                </p>
-              </div>
 
               <button 
                 type="submit"
                 disabled={!selectedImage || story.trim() === ""}
-                className="w-full bg-[#DF2020] disabled:bg-slate-200 disabled:text-slate-400 text-white font-black text-xs md:text-base py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-red-200 transition-all active:scale-[0.98] group"
+                className="w-full bg-[#DF2020] disabled:bg-slate-200 disabled:text-slate-400 text-white font-black text-[10px] md:text-base py-2 md:py-4 rounded-lg md:rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-[0.98] group"
               >
                 Submit & Win
-                <Ticket className="w-4 h-4 md:w-5 md:h-5 group-hover:rotate-12 transition-transform" />
+                <Ticket className="w-3 h-3 md:w-5 md:h-5 group-hover:rotate-12 transition-transform" />
               </button>
             </form>
           </motion.section>
+
+          {/* ═══ SECTION: YOUR ACTIVE MOMENT (Visible after submission) ═══ */}
+          {submittedMoment && (
+            <motion.section 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="shrink-0"
+            >
+              <div className="bg-white rounded-xl md:rounded-3xl p-2 md:p-6 shadow-xl border border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 md:w-20 md:h-20 rounded-lg md:rounded-2xl overflow-hidden shrink-0 shadow-inner">
+                    <img src={submittedMoment.image} className="w-full h-full object-cover" alt="Your Moment" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                        <span className="text-[7px] md:text-[10px] font-black text-[#DF2020] uppercase tracking-widest">Active Moment</span>
+                        <div className="flex items-center gap-1 bg-pink-50 px-1.5 py-0.5 rounded-md">
+                            <Heart className="w-2 h-2 text-[#DF2020] fill-[#DF2020]" />
+                            <span className="text-[8px] md:text-xs font-black text-[#DF2020]">{submittedMoment.likes}</span>
+                        </div>
+                    </div>
+                    <p className="text-[9px] md:text-sm font-bold text-slate-800 line-clamp-1 italic">
+                      "{submittedMoment.story}"
+                    </p>
+                    <div className="mt-1 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                            {submittedMoment.status === 'review' ? (
+                              <div className="flex items-center gap-1">
+                                <Clock className="w-2 h-2 text-orange-500 animate-pulse" />
+                                <span className="text-[7px] md:text-[9px] font-bold text-orange-600 uppercase">Reviewing</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1">
+                                <CheckCircle className="w-2 h-2 text-green-500" />
+                                <span className="text-[7px] md:text-[9px] font-bold text-green-600 uppercase font-black">Approved</span>
+                              </div>
+                            )}
+                        </div>
+                        
+                        {submittedMoment.status === 'approved' && (
+                          <div className="flex items-center gap-2">
+                             <motion.button whileTap={{ scale: 0.9 }} className="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-sm">
+                                <Share2 className="w-3 h-3" />
+                             </motion.button>
+                             <motion.button whileTap={{ scale: 0.9 }} className="w-6 h-6 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-sm">
+                                <span className="text-[10px] font-black">f</span>
+                             </motion.button>
+                             <motion.button whileTap={{ scale: 0.9 }} className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center shadow-sm">
+                                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current">
+                                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.86 4.51A6.3 6.3 0 0 0 16.25 15.66V7.12A8.16 8.16 0 0 0 21 8.35v-3a4.81 4.81 0 0 1-1.41-1.66z"/>
+                                </svg>
+                             </motion.button>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.section>
+          )}
         </div>
       </div>
+
+
 
       <ScratchCard 
         isOpen={showScratchCard} 
