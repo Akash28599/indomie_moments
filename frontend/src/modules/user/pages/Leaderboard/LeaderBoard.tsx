@@ -29,9 +29,9 @@ export const LeaderBoard: React.FC = () => {
   } = useGetLeaderboardQuery({ limit: 10, offset: 0 });
 
   return (
-    <div className="bg-[#FDFCF9] min-h-screen font-sans flex flex-col pb-32 overflow-x-hidden w-full max-w-[100vw]">
+    <div className="bg-[#FDFCF9] min-h-screen font-sans overflow-x-hidden overflow-y-auto w-full">
       {/* ═══ Header Section (Compact) ═══ */}
-      <div className="bg-[#DF2020] px-4 pt-6 pb-12 rounded-b-[32px] relative overflow-hidden shadow-xl shadow-red-200/50 shrink-0">
+      <div className="bg-[#DF2020] px-4 pt-6 pb-12 rounded-b-[32px] relative overflow-hidden shadow-xl shadow-red-200/50">
         <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-yellow-400 opacity-10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4" />
         
@@ -41,7 +41,7 @@ export const LeaderBoard: React.FC = () => {
       </div>
 
       {/* Content below header */}
-      <div className="max-w-2xl mx-auto px-4 -mt-6 relative z-20 flex-1 flex flex-col gap-4 min-h-0 pb-32">
+      <div className="max-w-2xl mx-auto px-4 -mt-6 relative z-20 flex flex-col gap-4 pb-36">
         
         {/* ═══ TOP RANKINGS TABLE ═══ */}
         <section className="bg-white rounded-3xl shadow-sm border border-gray-100 shrink-0 flex flex-col overflow-hidden w-full">
