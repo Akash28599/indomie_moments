@@ -29,24 +29,48 @@ export const LeaderBoard: React.FC = () => {
   } = useGetLeaderboardQuery({ limit: 10, offset: 0 });
 
   return (
-    <div className="bg-[#FDFCF9] min-h-screen font-sans flex flex-col pb-24">
+    <div className="bg-[#FDFCF9] min-h-screen font-sans overflow-x-hidden overflow-y-auto w-full">
       {/* ═══ Header Section (Compact) ═══ */}
-      <div className="bg-[#DF2020] px-4 pt-6 pb-16 rounded-b-[32px] relative overflow-hidden shadow-xl shadow-red-200/50 shrink-0">
+      <div className="bg-[#DF2020] px-4 pt-6 pb-12 rounded-b-[32px] relative overflow-hidden shadow-xl shadow-red-200/50">
         <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-yellow-400 opacity-10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4" />
         
         <div className="relative z-10 max-w-2xl mx-auto text-center">
           <LeaderBoardHeader />
-          <p className="text-white/80 text-[9px] font-black uppercase tracking-[0.2em] mt-2 mb-1">
-            Next Winner Announcement
-          </p>
-          <Timer targetDate={nextSunday} />
         </div>
       </div>
 
       {/* Content below header */}
-      <div className="max-w-2xl mx-auto px-4 -mt-8 relative z-20 flex-1 flex flex-col gap-3 min-h-0 pb-20">
+      <div className="max-w-2xl mx-auto px-4 -mt-6 relative z-20 flex flex-col gap-4 pb-36">
         
+        {/* ═══ TOP RANKINGS TABLE ═══ */}
+        <section className="bg-white rounded-3xl shadow-sm border border-gray-100 shrink-0 flex flex-col overflow-hidden w-full">
+          <div className="flex items-center justify-between p-3 shrink-0">
+            <h3 className="text-[9px] font-black text-gray-900 uppercase tracking-widest flex items-center gap-1">
+              <span className="text-[#FFD700]">🏆</span> Top Ranking
+            </h3>
+            <span className="text-[7px] font-bold text-gray-400 px-1.5 py-0.5 bg-gray-50 rounded-full flex-shrink-0">
+              Live Standings
+            </span>
+          </div>
+
+          {loadingLeaderboard ? (
+            <div className="space-y-3 p-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-12 bg-gray-50 rounded-xl animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <RankingTable data={leaderboard.length > 0 ? leaderboard.slice(0, 5) : [
+                { id: "1", userName: "Aisha B.", caption: "Indomie breakfast!!", likes: 12500, slug: "aisha-b" } as any,
+                { id: "2", userName: "Tunde O.", caption: "Late night cravings", likes: 11200, slug: "tunde-o" } as any,
+                { id: "3", userName: "Chioma E.", caption: "Noodles & Chill", likes: 9800, slug: "chioma-e" } as any,
+                { id: "4", userName: "Emeka U.", caption: "Spicy flavor FTW", likes: 8500, slug: "emeka-u" } as any,
+                { id: "5", userName: "Zainab M.", caption: "Party pack mode", likes: 7200, slug: "zainab-m" } as any,
+              ]} />
+          )}
+        </section>
+
         {/* ═══ LEGENDS OF THE WEEK (Top 3) ═══ */}
         {!loadingWinners && weeklyWinners.length >= 3 && (
           <section className="shrink-0">
@@ -80,28 +104,14 @@ export const LeaderBoard: React.FC = () => {
           </div>
         </section>
 
-        {/* ═══ TOP RANKINGS TABLE ═══ */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex-1 min-h-0 overflow-hidden flex flex-col">
-          <div className="flex items-center justify-between mb-3 shrink-0">
-            <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-widest flex items-center gap-1.5">
-              <span className="text-[#FFD700]">🏆</span> Top Ranking
-            </h3>
-            <span className="text-[8px] font-bold text-gray-400 px-2 py-0.5 bg-gray-50 rounded-full">
-              Live Standings
-            </span>
-          </div>
-
-          {loadingLeaderboard ? (
-            <div className="space-y-3 flex-1">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 bg-gray-50 rounded-xl animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="flex-1 min-h-0 overflow-y-auto">
-              <RankingTable data={leaderboard.slice(0, 5)} />
-            </div>
-          )}
+        {/* ═══ RESET TIMER BELOW ═══ */}
+        <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center shrink-0">
+           <h3 className="text-[#DF2020] text-xs font-black uppercase tracking-[0.2em] mb-3">
+             Next Winner Announcement
+           </h3>
+           <div className="inline-block bg-gray-50 rounded-xl p-3 border border-gray-100">
+             <Timer targetDate={nextSunday} />
+           </div>
         </section>
 
       </div>

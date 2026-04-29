@@ -14,7 +14,7 @@ import {
   clearUser,
   clearAdmin,
 } from "@/store";
-import { indomieLogo, indomieLogo_Float } from "../../../../assets";
+import { momentLogo } from "../../../../assets";
 import type { HeaderConfig, HeaderNavigationLink } from "./type";
 
 export interface HeaderProps {
@@ -89,9 +89,7 @@ export const Header = ({ config }: HeaderProps) => {
                 <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
                   <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" className="w-full h-full object-cover" />
                 </div>
-                <h1 className="text-[#b91c1c] font-black text-lg leading-none tracking-tight">
-                  Indomie<br/>Moments
-                </h1>
+                <img src={momentLogo} alt="Indomie Moments" className="h-8 w-auto object-contain" />
               </div>
 
               {isAuthenticated ? (
@@ -114,7 +112,7 @@ export const Header = ({ config }: HeaderProps) => {
             {/* Desktop Navigation (Hidden on Mobile) */}
             <div className="hidden md:flex justify-between items-center w-full">
               <Link to="/" className="flex items-center gap-3">
-                <img src={indomieLogo} alt="Indomie" className="h-12 md:h-16 w-auto" />
+                <img src={momentLogo} alt="Indomie Moments" className="h-10 md:h-14 w-auto object-contain" />
               </Link>
               <nav className="flex items-center space-x-10">
                 {filteredLinks.map((link: HeaderNavigationLink) => {

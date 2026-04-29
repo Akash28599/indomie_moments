@@ -18,23 +18,17 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ScratchCard from "./ScratchCard";
+import { promo1, promo2, promo3, promo4, promo5, promo6, promo7, promo8 } from "../../../../assets";
 
 const FEATURED_MOMENTS = [
-  {
-    id: 1,
-    title: "Hectic Day",
-    image: "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80&w=300&h=300",
-  },
-  {
-    id: 2,
-    title: "Late Night",
-    image: "https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&q=80&w=300&h=300",
-  },
-  {
-    id: 3,
-    title: "Super Chef",
-    image: "https://images.unsplash.com/photo-1569718212165-3a8278d596a1?auto=format&fit=crop&q=80&w=300&h=300",
-  },
+  { id: 1, title: "Hectic Day", image: promo1 },
+  { id: 2, title: "Late Night", image: promo2 },
+  { id: 3, title: "Super Chef", image: promo3 },
+  { id: 4, title: "Weekend Vibes", image: promo4 },
+  { id: 5, title: "Cook Off", image: promo5 },
+  { id: 6, title: "Family Time", image: promo6 },
+  { id: 7, title: "Street Style", image: promo7 },
+  { id: 8, title: "Celebration", image: promo8 },
 ];
 
 const Dashboard = () => {
@@ -52,7 +46,7 @@ const Dashboard = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentMomentIndex((prev) => (prev + 1) % FEATURED_MOMENTS.length);
-    }, 4000);
+    }, 2500);
     return () => clearInterval(timer);
   }, []);
 
@@ -71,8 +65,17 @@ const Dashboard = () => {
     }
   };
 
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (selectedImage && story.trim() !== "") {
+      setShowConfirm(true);
+    }
+  };
+
+  const handleConfirmSubmit = () => {
     if (selectedImage && story.trim() !== "") {
         setSubmittedMoment({
             image: selectedImage,
@@ -81,6 +84,7 @@ const Dashboard = () => {
             status: 'review'
         });
         setShowScratchCard(true);
+        setShowConfirm(false);
         // Clear form
         setStory("");
         setSelectedImage(null);
@@ -120,7 +124,7 @@ const Dashboard = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 1 }}
+                  transition={{ duration: 0.5 }}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               </AnimatePresence>
@@ -303,7 +307,53 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* ═══ CONFIRMATION MODAL ═══ */}
+      <AnimatePresence>
+        {showConfirm && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-5 border-2 border-red-100">
+                <Info className="w-8 h-8 text-[#DF2020]" />
+              </div>
 
+              <h3 className="text-xl font-black text-gray-900 mb-2">Confirm Submission</h3>
+              <p className="text-sm text-gray-500 font-medium mb-6 leading-relaxed">
+                Are you sure you want to submit this moment? Once submitted, it will go for review and you'll receive a scratch card reward!
+              </p>
+
+              {/* Preview */}
+              {selectedImage && (
+                <div className="mb-6 rounded-2xl overflow-hidden border border-gray-100 shadow-inner">
+                  <img src={selectedImage} alt="Preview" className="w-full h-32 object-cover" />
+                  <div className="bg-gray-50 px-4 py-2">
+                    <p className="text-[10px] font-bold text-gray-500 italic truncate">"{story}"</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmSubmit}
+                  className="flex-1 bg-[#DF2020] text-white py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg shadow-red-200 active:scale-[0.98] transition-transform"
+                >
+                  Submit 🎉
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <ScratchCard 
         isOpen={showScratchCard} 

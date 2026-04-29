@@ -38,10 +38,10 @@ export const MomentCard = ({
 
   return (
    <Link to={sharePath} className="block group">
-  <div className="bg-white rounded-lg overflow-hidden h-[500px] flex flex-col shadow-md hover:shadow-xl transition-shadow">
+  <div className="bg-white rounded-lg overflow-hidden flex flex-col shadow-md hover:shadow-xl transition-shadow">
 
     {/* IMAGE */}
-    <div className="relative h-[380px] overflow-hidden">
+    <div className="relative aspect-square overflow-hidden">
       <img
         src={moment.imageUrl}
         alt={moment.caption}

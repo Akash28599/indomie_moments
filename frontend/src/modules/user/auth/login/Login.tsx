@@ -24,10 +24,19 @@ export const Login = ({ isHero = true, onSwitch }: LoginProps) => {
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [inlineMessage, setInlineMessage] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (step === "otp" && countdown > 0) {
+      timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [step, countdown]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -63,6 +72,7 @@ export const Login = ({ isHero = true, onSwitch }: LoginProps) => {
       await requestOtp({ phoneNumber: cleaned }).unwrap();
       toast.success("OTP sent! Please check your phone");
       setStep("otp");
+      setCountdown(30);
     } catch (err: any) {
       const message: string | undefined = err?.data?.message;
       if (message === "This number is not registered. Please register first.") {
@@ -254,6 +264,23 @@ export const Login = ({ isHero = true, onSwitch }: LoginProps) => {
                   >
                     {isVerifying ? "Verifying..." : "Verify & Login"}
                   </button>
+
+                  <div className="flex items-center justify-between mt-6 px-2">
+                    <button
+                      onClick={() => setStep("phone")}
+                      className="text-gray-400 font-bold text-xs uppercase tracking-wider hover:text-[#E2231A] transition-colors"
+                    >
+                      Change Phone
+                    </button>
+
+                    <button
+                      onClick={(e) => handleSubmitPhone(e as any)}
+                      disabled={countdown > 0 || sendingOtp}
+                      className="text-gray-400 font-bold text-xs uppercase tracking-wider hover:text-[#E2231A] transition-colors disabled:opacity-50 disabled:hover:text-gray-400"
+                    >
+                      {countdown > 0 ? `Resend in ${countdown}s` : "Resend OTP"}
+                    </button>
+                  </div>
                 </>
               )}
             </div>

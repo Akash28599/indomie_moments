@@ -237,15 +237,6 @@ export const SharePage = () => {
                 </span>
               </button>
 
-              {/* Share Button */}
-              <button
-                onClick={openShareDialog}
-                className="w-full py-4 rounded-full font-bold text-lg bg-[#FFD700] text-gray-900 hover:bg-yellow-300 transition-all flex items-center justify-center gap-3"
-              >
-                <Share2 className="w-6 h-6" />
-                Share This Moment
-              </button>
-
               {!isAuthenticated && (
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-center">
                   <p className="text-sm text-blue-800 mb-3">
