@@ -448,6 +448,7 @@ const LandingPage = () => {
             )}
           </motion.div>
         </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { X, ArrowLeft, Gift, Users, Sparkles, Trophy, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getRandomPrize } from "./constant/scratchCard.constant";
-import { nira } from "../../../../assets/index";
 import html2canvas from "html2canvas";
 
 interface ScratchCardProps {
@@ -25,13 +24,15 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
 
   const CANVAS_W = 320;
   const CANVAS_H = 320; // Squared for better look
+  const scratchCountRef = useRef(0);
 
   const initCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) return;
     ctxRef.current = ctx;
+    scratchCountRef.current = 0;
 
     // Premium Golden Gradient
     const grad = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
@@ -56,7 +57,7 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
 
     // Text Instructions
     ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
-    ctx.font = "black 20px sans-serif";
+    ctx.font = "bold 20px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("SCRATCH TO REVEAL", CANVAS_W / 2, CANVAS_H / 2);
@@ -68,7 +69,7 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
     if (isOpen) {
       setRevealed(false);
       setScratchPercent(0);
-      const t = setTimeout(initCanvas, 100);
+      const t = setTimeout(initCanvas, 150);
       return () => clearTimeout(t);
     }
   }, [isOpen, initCanvas]);
@@ -76,14 +77,19 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
   const calcProgress = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return 0;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) return 0;
-    const data = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
-    let cleared = 0;
-    for (let i = 3; i < data.length; i += 4) {
-      if (data[i] === 0) cleared++;
+    try {
+      const data = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+      let cleared = 0;
+      // Sample every 4th pixel for performance
+      for (let i = 3; i < data.length; i += 16) {
+        if (data[i] === 0) cleared++;
+      }
+      return (cleared / (CANVAS_W * CANVAS_H / 4)) * 100;
+    } catch {
+      return 0;
     }
-    return (cleared / (CANVAS_W * CANVAS_H)) * 100;
   }, []);
 
   const scratch = useCallback(
@@ -91,12 +97,16 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
       const ctx = ctxRef.current;
       if (!ctx || revealed) return;
       ctx.beginPath();
-      ctx.arc(x, y, 25, 0, Math.PI * 2);
+      ctx.arc(x, y, 30, 0, Math.PI * 2);
       ctx.fill();
 
-      const pct = calcProgress();
-      setScratchPercent(pct);
-      if (pct > 40) setRevealed(true);
+      scratchCountRef.current += 1;
+      // Only check progress every 5 strokes for performance
+      if (scratchCountRef.current % 5 === 0) {
+        const pct = calcProgress();
+        setScratchPercent(pct);
+        if (pct > 25) setRevealed(true);
+      }
     },
     [revealed, calcProgress]
   );
@@ -114,12 +124,14 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
   };
 
   const handleStart = (e: any) => {
+    e.preventDefault();
     setIsScratching(true);
     const pos = getPos(e);
     scratch(pos.x, pos.y);
   };
 
   const handleMove = (e: any) => {
+    e.preventDefault();
     if (!isScratching) return;
     const pos = getPos(e);
     scratch(pos.x, pos.y);
@@ -165,7 +177,7 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                 Lucky Scratch!
               </h2>
               <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8">
-                Clear 40% of the card to reveal
+                Scratch the card to reveal your prize
               </p>
 
               {/* SCRATCH CONTAINER */}
@@ -181,16 +193,14 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                     animate={revealed ? { scale: 1 } : { scale: 0 }}
                     className="flex flex-col items-center justify-center"
                   >
-                    <div className="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center mb-6">
+                    <div className="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center mb-4">
                       <Trophy className="w-10 h-10 text-[#FFD700]" />
                     </div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <img src={nira} alt="Naira" className="w-8 h-auto" />
-                      <h3 className="text-5xl font-black text-gray-900 leading-tight">
-                        {prize.amount.toLocaleString()}
-                      </h3>
-                    </div>
-                    <p className="text-[10px] font-black text-[#DF2020] uppercase tracking-[0.3em] mt-2 animate-bounce">Congratulations!</p>
+                    <p className="text-xs font-black text-[#DF2020] uppercase tracking-[0.2em] mb-3">Congratulations! You won</p>
+                    <h3 className="text-4xl font-black text-gray-900 leading-tight mb-1">
+                      {prize.label}
+                    </h3>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 animate-bounce">🎉 Scratch Card Reward 🎉</p>
                   </motion.div>
                 </div>
 

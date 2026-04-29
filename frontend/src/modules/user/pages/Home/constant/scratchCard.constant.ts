@@ -1,11 +1,6 @@
 export const SCRATCH_CARD_PRIZES = [
-  { amount: 200, weight: 625000, color: "#FFD700" },
-  { amount: 300, weight: 275000, color: "#C0C0C0" },
-  { amount: 500, weight: 40000, color: "#FF6B35" },
-  { amount: 700, weight: 25000, color: "#FFD700" },
-  { amount: 800, weight: 20000, color: "#87CEEB" },
-  { amount: 1000, weight: 10000, color: "#FFD700" },
-  { amount: 1500, weight: 5000, color: "#FFD700" },
+  { amount: 200, label: "₦200 Airtime", weight: 50, color: "#FFD700" },
+  { amount: 100, label: "₦100 Airtime", weight: 50, color: "#C0C0C0" },
 ];
 
 export const getRandomPrize = () => {

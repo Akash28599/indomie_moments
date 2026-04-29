@@ -36,41 +36,41 @@ const IndomieMoments = () => {
 
   if (isLoading) {
     return (
-      <div className="h-[100dvh] bg-black flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#E2231A] border-t-white rounded-full animate-spin" />
+      <div className="h-[100dvh] bg-[#FFF8F0] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-red-100 border-t-[#DF2020] rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="h-[100dvh] bg-[#0F0F0F] flex justify-center overflow-hidden relative">
+    <div className="h-[100dvh] bg-[#FFF8F0] flex justify-center overflow-hidden relative">
       
       {/* ─── DESKTOP BACKGROUND BLUR ─── */}
       <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-1/2 h-full bg-red-900/10 blur-[120px] -translate-x-1/2" />
-        <div className="absolute bottom-0 right-0 w-1/2 h-full bg-yellow-900/10 blur-[120px] translate-x-1/2" />
+        <div className="absolute top-0 left-0 w-1/2 h-full bg-red-100/40 blur-[120px] -translate-x-1/2" />
+        <div className="absolute bottom-0 right-0 w-1/2 h-full bg-yellow-100/40 blur-[120px] translate-x-1/2" />
       </div>
 
       {/* ─── MOMENTS FEED CONTAINER ─── */}
       <div 
-        className="w-full md:max-w-[450px] h-full bg-[#0F0F0F] relative overflow-y-scroll scrollbar-none z-10 pt-24 pb-10 px-4 flex flex-col gap-6" 
+        className="w-full md:max-w-[450px] h-full bg-[#FFF8F0] relative overflow-y-scroll scrollbar-none z-10 pt-24 pb-10 px-4 flex flex-col gap-6" 
         ref={scrollRef}
       >
         {/* Feed Header */}
-        <div className="fixed top-0 left-0 right-0 md:absolute md:left-0 md:right-0 z-50 p-4 pt-6 flex items-center justify-between pointer-events-none bg-gradient-to-b from-[#0F0F0F] via-[#0F0F0F]/90 to-transparent pb-8">
+        <div className="fixed top-0 left-0 right-0 md:absolute md:left-0 md:right-0 z-50 p-4 pt-6 flex items-center justify-between pointer-events-none bg-gradient-to-b from-[#FFF8F0] via-[#FFF8F0]/90 to-transparent pb-8">
           <button 
             onClick={() => navigate("/")}
-            className="p-2.5 bg-black/40 backdrop-blur-md rounded-full pointer-events-auto border border-white/10 hover:bg-black/60 transition-all"
+            className="p-2.5 bg-white/80 backdrop-blur-md rounded-full pointer-events-auto border border-gray-200 hover:bg-white transition-all shadow-sm"
           >
-            <ChevronLeft className="text-white w-6 h-6" />
+            <ChevronLeft className="text-gray-900 w-6 h-6" />
           </button>
-          <div className="flex gap-1 bg-black/40 backdrop-blur-md rounded-full p-1 pointer-events-auto border border-white/10">
+          <div className="flex gap-1 bg-white/80 backdrop-blur-md rounded-full p-1 pointer-events-auto border border-gray-200 shadow-sm">
             <button 
               onClick={() => setActiveTab("friends")}
               className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
                 activeTab === "friends" 
-                  ? "bg-white text-black" 
-                  : "text-white/70 hover:text-white"
+                  ? "bg-[#DF2020] text-white shadow-md" 
+                  : "text-gray-500 hover:text-gray-900"
               }`}
             >
               <Users className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
@@ -80,8 +80,8 @@ const IndomieMoments = () => {
               onClick={() => setActiveTab("foryou")}
               className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
                 activeTab === "foryou" 
-                  ? "bg-white text-black" 
-                  : "text-white/70 hover:text-white"
+                  ? "bg-[#DF2020] text-white shadow-md" 
+                  : "text-gray-500 hover:text-gray-900"
               }`}
             >
               <Globe className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
@@ -98,10 +98,10 @@ const IndomieMoments = () => {
 
       {/* ─── DESKTOP DECORATIVE ELEMENTS (SIDE) ─── */}
       <div className="hidden lg:flex absolute left-10 top-1/2 -translate-y-1/2 flex-col gap-6 max-w-[300px]">
-        <h2 className="text-white text-4xl font-black leading-tight">
+        <h2 className="text-gray-900 text-4xl font-black leading-tight">
           Every Moment <br /> <span className="text-[#DF2020]">Is A Story.</span>
         </h2>
-        <p className="text-white/40 text-sm font-medium leading-relaxed">
+        <p className="text-gray-400 text-sm font-medium leading-relaxed">
           Scroll through thousands of stories from Indomie fans across the globe. Share your own and win!
         </p>
       </div>
@@ -130,7 +130,7 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
   };
 
   return (
-    <div className="aspect-[4/5] w-full shrink-0 relative flex flex-col items-center justify-center bg-zinc-900 overflow-hidden shadow-2xl rounded-[2rem] border border-white/5">
+    <div className="aspect-[4/5] w-full shrink-0 relative flex flex-col items-center justify-center bg-white overflow-hidden shadow-xl rounded-[2rem] border border-gray-100">
       {/* Media Content */}
       <div className="absolute inset-0 flex items-center justify-center" onClick={handleDoubleTap}>
         <img 
