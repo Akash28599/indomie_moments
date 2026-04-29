@@ -48,7 +48,7 @@ const UserLayout = () => {
       {!isGuestHomePage && !isImmersivePage && <Header config={userHeaderConfig} />}
 
       {/* 🔥 MAIN CONTENT */}
-      <main className="flex-1 min-h-0">
+      <main className="flex-1 min-h-0 overflow-y-auto">
         <Outlet />
       </main>
 
