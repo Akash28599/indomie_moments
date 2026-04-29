@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, X, Play, Package, MapPin, Trophy, Star, ChevronRight } from "lucide-react";
+import { ArrowLeft, X, Play, Package, MapPin, Trophy, Star, ChevronRight, Navigation, Copy, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { noodles } from "../../../../assets";
 
@@ -47,13 +47,55 @@ const WinnersHub = () => {
   const [selectedState, setSelectedState] = useState("Lagos");
   const [selectedCity, setSelectedCity] = useState("All");
 
+  const [isLocating, setIsLocating] = useState(false);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
+
   const centers = [
-    { state: "Lagos", city: "Surulere", name: "Surulere Hub", address: "45 Adeniran Ogunsanya St, Surulere", supervisor: "Mr. Adebayo", phone: "+234 801 234 5678", mapLink: "https://maps.google.com/?q=45+Adeniran+Ogunsanya+St+Surulere", status: "Open Now", time: "8AM - 6PM" },
-    { state: "Lagos", city: "Ikeja", name: "Ikeja Mega Plaza", address: "Obafemi Awolowo Way, Ikeja", supervisor: "Mrs. Chioma", phone: "+234 802 345 6789", mapLink: "https://maps.google.com/?q=Obafemi+Awolowo+Way+Ikeja", status: "Open Now", time: "9AM - 8PM" },
-    { state: "Lagos", city: "Lekki", name: "Lekki Phase 1", address: "Admiralty Way, Beside City Dia", supervisor: "Mr. Tunde", phone: "+234 803 456 7890", mapLink: "https://maps.google.com/?q=Admiralty+Way+Lekki", status: "Closing Soon", time: "8AM - 5PM" }
+    { id: 1, state: "Lagos", city: "Surulere", name: "Surulere Hub", address: "45 Adeniran Ogunsanya St, Surulere", supervisor: "Mr. Adebayo", phone: "+234 801 234 5678", mapLink: "https://maps.google.com/?q=45+Adeniran+Ogunsanya+St+Surulere", status: "Open Now", time: "8AM - 6PM", lat: 6.495, lng: 3.351 },
+    { id: 2, state: "Lagos", city: "Ikeja", name: "Ikeja Mega Plaza", address: "Obafemi Awolowo Way, Ikeja", supervisor: "Mrs. Chioma", phone: "+234 802 345 6789", mapLink: "https://maps.google.com/?q=Obafemi+Awolowo+Way+Ikeja", status: "Open Now", time: "9AM - 8PM", lat: 6.601, lng: 3.351 },
+    { id: 3, state: "Lagos", city: "Lekki", name: "Lekki Phase 1", address: "Admiralty Way, Beside City Dia", supervisor: "Mr. Tunde", phone: "+234 803 456 7890", mapLink: "https://maps.google.com/?q=Admiralty+Way+Lekki", status: "Closing Soon", time: "8AM - 5PM", lat: 6.444, lng: 3.473 }
   ];
 
   const filteredCenters = centers.filter(c => c.state === selectedState && (selectedCity === "All" || c.city === selectedCity));
+
+  const handleGetNearest = () => {
+    setIsLocating(true);
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      setIsLocating(false);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        let nearest = centers[0];
+        let minDistance = Infinity;
+
+        centers.forEach(c => {
+          const dist = Math.hypot(c.lat - latitude, c.lng - longitude);
+          if (dist < minDistance) {
+            minDistance = dist;
+            nearest = c;
+          }
+        });
+
+        setSelectedState(nearest.state);
+        setSelectedCity(nearest.city);
+        setIsLocating(false);
+      },
+      () => {
+        alert("Unable to retrieve your location. Please select manually.");
+        setIsLocating(false);
+      }
+    );
+  };
+
+  const handleCopyDetails = (center: any) => {
+    const details = `Center: ${center.name}\nAddress: ${center.address}\nSupervisor: ${center.supervisor}\nPhone: ${center.phone}`;
+    navigator.clipboard.writeText(details);
+    setCopiedId(center.id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-[#FFFCF8] pb-32 font-sans relative overflow-x-hidden">
@@ -182,6 +224,14 @@ const WinnersHub = () => {
               <h2 className="text-2xl font-black text-gray-900 italic tracking-tight">Active Centers</h2>
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Verified Locations</p>
             </div>
+            <button
+              onClick={handleGetNearest}
+              disabled={isLocating}
+              className="text-xs font-bold bg-[#DF2020] text-white px-4 py-2 rounded-xl shadow-md hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              <Navigation className="w-3 h-3" />
+              {isLocating ? "Locating..." : "Find Nearest"}
+            </button>
           </div>
 
           <div className="flex gap-2 mb-6">
@@ -239,14 +289,23 @@ const WinnersHub = () => {
                     <p className="text-xs font-bold text-gray-900">{center.supervisor}</p>
                     <p className="text-[11px] font-bold text-[#DF2020]">{center.phone}</p>
                   </div>
-                  <a 
-                    href={center.mapLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center bg-white border border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[10px] font-bold text-blue-600 hover:bg-blue-50 transition-colors"
-                  >
-                    View Map
-                  </a>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => handleCopyDetails(center)}
+                      className="inline-flex items-center justify-center bg-white border border-gray-200 shadow-sm rounded-lg px-3 py-2 text-[10px] font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+                    >
+                      {copiedId === center.id ? <Check className="w-3 h-3 text-green-500 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                      {copiedId === center.id ? "Copied" : "Copy"}
+                    </button>
+                    <a 
+                      href={center.mapLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center justify-center bg-[#DF2020] shadow-sm rounded-lg px-3 py-2 text-[10px] font-bold text-white hover:bg-red-700 transition-colors"
+                    >
+                      View Map
+                    </a>
+                  </div>
                 </div>
               </motion.div>
             ))}

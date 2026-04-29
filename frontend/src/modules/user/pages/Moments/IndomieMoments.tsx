@@ -53,11 +53,11 @@ const IndomieMoments = () => {
 
       {/* ─── MOMENTS FEED CONTAINER ─── */}
       <div 
-        className="w-full md:max-w-[450px] h-full bg-black shadow-2xl relative overflow-y-scroll snap-y snap-mandatory scrollbar-none z-10" 
+        className="w-full md:max-w-[450px] h-full bg-[#0F0F0F] relative overflow-y-scroll scrollbar-none z-10 pt-24 pb-10 px-4 flex flex-col gap-6" 
         ref={scrollRef}
       >
         {/* Feed Header */}
-        <div className="fixed top-0 left-0 right-0 md:absolute md:left-0 md:right-0 z-50 p-4 flex items-center justify-between pointer-events-none">
+        <div className="fixed top-0 left-0 right-0 md:absolute md:left-0 md:right-0 z-50 p-4 pt-6 flex items-center justify-between pointer-events-none bg-gradient-to-b from-[#0F0F0F] via-[#0F0F0F]/90 to-transparent pb-8">
           <button 
             onClick={() => navigate("/")}
             className="p-2.5 bg-black/40 backdrop-blur-md rounded-full pointer-events-auto border border-white/10 hover:bg-black/60 transition-all"
@@ -129,19 +129,8 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
     }
   };
 
-  const shareUrl = `${window.location.origin}/share/${moment.slug || moment.id}`;
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({ title: "Indomie Moment", text: moment.caption, url: shareUrl });
-    } else {
-      navigator.clipboard?.writeText(shareUrl);
-      alert("Link copied to clipboard!");
-    }
-  };
-
   return (
-    <div className="h-[100dvh] w-full snap-start relative flex flex-col items-center justify-center bg-zinc-900 overflow-hidden">
+    <div className="aspect-[4/5] w-full shrink-0 relative flex flex-col items-center justify-center bg-zinc-900 overflow-hidden shadow-2xl rounded-[2rem] border border-white/5">
       {/* Media Content */}
       <div className="absolute inset-0 flex items-center justify-center" onClick={handleDoubleTap}>
         <img 
@@ -166,8 +155,8 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
         )}
       </AnimatePresence>
 
-      {/* Side Actions (Contained inside the phone container) */}
-      <div className="absolute right-4 bottom-20 flex flex-col gap-5 items-center z-30">
+      {/* Side Actions */}
+      <div className="absolute right-4 bottom-6 flex flex-col gap-5 items-center z-30">
         <div className="flex flex-col items-center gap-1.5">
           <motion.button 
             whileTap={{ scale: 0.8 }}
@@ -177,27 +166,6 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
             <Heart className={`w-6 h-6 ${liked ? 'fill-current' : ''}`} />
           </motion.button>
           <span className="text-white text-[10px] font-black drop-shadow-md">{moment.likes + (liked ? 1 : 0)}</span>
-        </div>
-
-        <div className="flex flex-col items-center gap-1.5">
-          <motion.button 
-            whileTap={{ scale: 0.8 }}
-            className="p-3.5 bg-black/40 backdrop-blur-md rounded-full text-white border border-white/10 hover:bg-black/60 transition-all"
-          >
-            <MessageCircle className="w-6 h-6" />
-          </motion.button>
-          <span className="text-white text-[10px] font-black drop-shadow-md">24</span>
-        </div>
-
-        <div className="flex flex-col items-center gap-1.5">
-          <motion.button 
-            whileTap={{ scale: 0.8 }}
-            onClick={handleShare}
-            className="p-3.5 bg-black/40 backdrop-blur-md rounded-full text-white border border-white/10 hover:bg-black/60 transition-all"
-          >
-            <Share2 className="w-6 h-6" />
-          </motion.button>
-          <span className="text-white text-[10px] font-black drop-shadow-md">Share</span>
         </div>
       </div>
 
@@ -232,15 +200,6 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
         </div>
       </div>
 
-      {/* Progress Bar (TikTok style) */}
-      <div className="absolute bottom-0 left-0 h-1 bg-white/10 w-full z-40">
-        <motion.div 
-          className="h-full bg-[#DF2020]"
-          initial={{ width: "0%" }}
-          whileInView={{ width: "100%" }}
-          transition={{ duration: 15, ease: "linear" }}
-        />
-      </div>
     </div>
   );
 };

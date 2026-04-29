@@ -1,19 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, ArrowLeft, Gift, Users, Sparkles, Trophy } from "lucide-react";
+import { X, ArrowLeft, Gift, Users, Sparkles, Trophy, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getRandomPrize } from "./constant/scratchCard.constant";
+import { nira } from "../../../../assets/index";
+import html2canvas from "html2canvas";
 
 interface ScratchCardProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const PRIZES = [
-  { text: "🍜 Free Noodle Pack!", color: "#FFD700" },
-  { text: "🎉 Silver Gift Card!", color: "#C0C0C0" },
-  { text: "🔥 Premium Voucher!", color: "#FF6B35" },
-  { text: "🏆 Gold Reward!", color: "#FFD700" },
-  { text: "⭐ Mini Snack Pack", color: "#87CEEB" },
-];
 
 /**
  * ScratchCard – Interactive scratch-to-reveal prize modal.
@@ -21,10 +16,11 @@ const PRIZES = [
  */
 export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [isScratching, setIsScratching] = useState(false);
   const [scratchPercent, setScratchPercent] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [prize] = useState(() => PRIZES[Math.floor(Math.random() * PRIZES.length)]);
+  const [prize] = useState(() => getRandomPrize());
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   const CANVAS_W = 320;
@@ -129,6 +125,20 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
     scratch(pos.x, pos.y);
   };
 
+  const downloadCard = async () => {
+    if (!cardRef.current) return;
+    try {
+      const canvas = await html2canvas(cardRef.current, { backgroundColor: null });
+      const image = canvas.toDataURL("image/png", 1.0);
+      const link = document.createElement("a");
+      link.download = "indomie-scratch-card.png";
+      link.href = image;
+      link.click();
+    } catch (error) {
+      console.error("Failed to download card", error);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -137,10 +147,10 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-white w-full max-w-sm rounded-[3rem] overflow-hidden shadow-2xl relative border border-gray-100"
+            className="bg-white w-full max-w-sm rounded-[3rem] overflow-hidden shadow-2xl relative border border-gray-100 flex flex-col max-h-[90vh]"
           >
             {/* Header */}
-            <div className="px-8 pt-8 pb-4 flex items-center justify-between">
+            <div className="px-8 pt-8 pb-4 flex items-center justify-between shrink-0">
                <button onClick={onClose} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors">
                   <X className="w-5 h-5" />
                </button>
@@ -150,7 +160,7 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                </div>
             </div>
 
-            <div className="px-8 pb-10 text-center">
+            <div className="px-8 pb-8 text-center flex-1 overflow-y-auto">
               <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2 italic">
                 Lucky Scratch!
               </h2>
@@ -159,21 +169,29 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
               </p>
 
               {/* SCRATCH CONTAINER */}
-              <div className="relative w-full aspect-square rounded-[2rem] overflow-hidden shadow-inner bg-gray-50 border-4 border-gray-50 group">
+              <div 
+                ref={cardRef}
+                className="relative w-full aspect-square rounded-[2rem] overflow-hidden shadow-inner bg-gray-50 border-4 border-gray-50 group"
+              >
                 
                 {/* Prize Underneath */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50 px-6">
                   <motion.div 
                     initial={{ scale: 0 }}
-                    animate={revealed ? { scale: 1.2 } : { scale: 0 }}
-                    className="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center mb-6"
+                    animate={revealed ? { scale: 1 } : { scale: 0 }}
+                    className="flex flex-col items-center justify-center"
                   >
-                    <Trophy className="w-10 h-10 text-[#FFD700]" />
+                    <div className="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center mb-6">
+                      <Trophy className="w-10 h-10 text-[#FFD700]" />
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <img src={nira} alt="Naira" className="w-8 h-auto" />
+                      <h3 className="text-5xl font-black text-gray-900 leading-tight">
+                        {prize.amount.toLocaleString()}
+                      </h3>
+                    </div>
+                    <p className="text-[10px] font-black text-[#DF2020] uppercase tracking-[0.3em] mt-2 animate-bounce">Congratulations!</p>
                   </motion.div>
-                  <h3 className="text-2xl font-black text-gray-900 leading-tight mb-1">
-                    {prize.text}
-                  </h3>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Congratulations!</p>
                 </div>
 
                 {/* Canvas Overlay */}
@@ -207,16 +225,27 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
               </div>
 
               {/* Bottom Actions */}
-              <div className="mt-8">
+              <div className="mt-8 flex flex-col gap-3">
                 {revealed ? (
-                  <motion.button
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    onClick={onClose}
-                    className="w-full bg-[#DF2020] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-red-200 active:scale-[0.98] transition-transform"
-                  >
-                    Claim & Close <span className="ml-2">🎁</span>
-                  </motion.button>
+                  <>
+                    <motion.button
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      onClick={downloadCard}
+                      className="w-full bg-[#FFD700] text-gray-900 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-yellow-200 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-4 h-4" /> Download Card
+                    </motion.button>
+                    <motion.button
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                      onClick={onClose}
+                      className="w-full bg-[#DF2020] text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-red-200 active:scale-[0.98] transition-transform"
+                    >
+                      Claim & Close <span className="ml-2">🎁</span>
+                    </motion.button>
+                  </>
                 ) : (
                   <div className="flex items-center justify-center gap-2 text-xs font-black text-gray-300 uppercase tracking-widest">
                     <Users className="w-4 h-4" />

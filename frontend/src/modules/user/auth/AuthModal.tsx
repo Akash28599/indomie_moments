@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, LogIn } from "lucide-react";
+import { X, ArrowRight, LogIn, RefreshCw } from "lucide-react";
 import { toast } from "react-toastify";
 import { 
   useAppDispatch, 
@@ -25,12 +25,21 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   
   const dispatch = useAppDispatch();
   const [requestOtp, { isLoading: sendingOtp }] = useRequestOtpMutation();
 
-  const handleSendOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (step === "otp" && countdown > 0) {
+      timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [step, countdown]);
+
+  const handleSendOTP = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     const cleaned = digitsOnly(phone);
     if (cleaned.length < 10) {
       toast.error("Please enter a valid 10-digit phone number");
@@ -38,10 +47,10 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
 
     try {
-      // In this flow, we just request OTP. The backend handles if it's registration or login.
       await requestOtp({ phoneNumber: cleaned }).unwrap();
       toast.success("OTP sent! Please check your phone");
       setStep("otp");
+      setCountdown(30);
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to send OTP. Please try again.");
     }
@@ -197,21 +206,40 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   </InputOTP>
                 </div>
 
-                <button
-                  onClick={handleVerifyOTP}
-                  disabled={isVerifying || otp.length !== 6}
-                  className="w-full bg-[#DF2020] text-white h-16 rounded-2xl font-black text-lg shadow-xl shadow-red-500/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-transform disabled:opacity-50"
-                >
-                  {isVerifying ? "Verifying..." : "Verify & Start Winning"}
-                  {!isVerifying && <LogIn className="w-5 h-5" />}
-                </button>
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={handleVerifyOTP}
+                    disabled={isVerifying || otp.length !== 6}
+                    className="w-full bg-[#DF2020] text-white h-16 rounded-2xl font-black text-lg shadow-xl shadow-red-500/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-transform disabled:opacity-50"
+                  >
+                    {isVerifying ? "Verifying..." : "Verify & Start Winning"}
+                    {!isVerifying && <LogIn className="w-5 h-5" />}
+                  </button>
 
-                <button 
-                  onClick={() => setStep("phone")}
-                  className="w-full text-gray-400 font-black text-xs uppercase tracking-widest hover:text-[#DF2020] transition-colors"
-                >
-                  Change phone number
-                </button>
+                  <div className="flex items-center justify-between px-2">
+                    <button 
+                      onClick={() => setStep("phone")}
+                      className="text-gray-400 font-black text-xs uppercase tracking-widest hover:text-[#DF2020] transition-colors"
+                    >
+                      Change Phone
+                    </button>
+
+                    <button
+                      onClick={() => handleSendOTP()}
+                      disabled={countdown > 0 || sendingOtp}
+                      className="text-gray-400 font-black text-xs uppercase tracking-widest flex items-center gap-1 hover:text-[#DF2020] transition-colors disabled:opacity-50 disabled:hover:text-gray-400"
+                    >
+                      {countdown > 0 ? (
+                        `Resend in ${countdown}s`
+                      ) : (
+                        <>
+                          <RefreshCw className="w-3 h-3" />
+                          Resend OTP
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </motion.div>

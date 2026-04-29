@@ -6,10 +6,23 @@ import {
   Rocket, 
   ChevronRight,
   Star,
-  X
+  X,
+  Copy,
+  CheckCircle2
 } from "lucide-react";
 import { AuthModal } from "../../auth/AuthModal";
 import { indomieLogo } from "../../../../assets";
+
+const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371; // km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+};
 
 /**
  * LandingPage – Single viewport, no-scroll mobile-first landing.
@@ -22,13 +35,61 @@ const LandingPage = () => {
   const [selectedState, setSelectedState] = useState("Lagos");
   const [selectedCity, setSelectedCity] = useState("All");
 
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [copiedPhoneId, setCopiedPhoneId] = useState<string | null>(null);
+
   const centers = [
-    { state: "Lagos", city: "Surulere", name: "Surulere Hub", address: "45 Adeniran Ogunsanya St, Surulere", supervisor: "Mr. Adebayo", phone: "+234 801 234 5678", mapLink: "https://maps.google.com/?q=45+Adeniran+Ogunsanya+St+Surulere", status: "Open Now", time: "8AM - 6PM" },
-    { state: "Lagos", city: "Ikeja", name: "Ikeja Mega Plaza", address: "Obafemi Awolowo Way, Ikeja", supervisor: "Mrs. Chioma", phone: "+234 802 345 6789", mapLink: "https://maps.google.com/?q=Obafemi+Awolowo+Way+Ikeja", status: "Open Now", time: "9AM - 8PM" },
-    { state: "Lagos", city: "Lekki", name: "Lekki Phase 1", address: "Admiralty Way, Beside City Dia", supervisor: "Mr. Tunde", phone: "+234 803 456 7890", mapLink: "https://maps.google.com/?q=Admiralty+Way+Lekki", status: "Closing Soon", time: "8AM - 5PM" }
+    { state: "Lagos", city: "Surulere", name: "Surulere Hub", address: "45 Adeniran Ogunsanya St, Surulere", supervisor: "Mr. Adebayo", phone: "+234 801 234 5678", mapLink: "https://maps.google.com/?q=45+Adeniran+Ogunsanya+St+Surulere", status: "Open Now", time: "8AM - 6PM", lat: 6.4965, lng: 3.3486 },
+    { state: "Lagos", city: "Ikeja", name: "Ikeja Mega Plaza", address: "Obafemi Awolowo Way, Ikeja", supervisor: "Mrs. Chioma", phone: "+234 802 345 6789", mapLink: "https://maps.google.com/?q=Obafemi+Awolowo+Way+Ikeja", status: "Open Now", time: "9AM - 8PM", lat: 6.6018, lng: 3.3515 },
+    { state: "Lagos", city: "Lekki", name: "Lekki Phase 1", address: "Admiralty Way, Beside City Dia", supervisor: "Mr. Tunde", phone: "+234 803 456 7890", mapLink: "https://maps.google.com/?q=Admiralty+Way+Lekki", status: "Closing Soon", time: "8AM - 5PM", lat: 6.4698, lng: 3.5852 }
   ];
 
-  const filteredCenters = centers.filter(c => c.state === selectedState && (selectedCity === "All" || c.city === selectedCity));
+  let processedCenters = [...centers];
+  if (userLocation) {
+    processedCenters = processedCenters.map(c => ({
+      ...c,
+      distance: getDistance(userLocation.lat, userLocation.lng, c.lat, c.lng)
+    })).sort((a, b) => (a.distance || 0) - (b.distance || 0));
+  } else {
+    processedCenters = processedCenters.filter(c => c.state === selectedState && (selectedCity === "All" || c.city === selectedCity));
+  }
+
+  const handleCopy = (phone: string, name: string) => {
+    navigator.clipboard.writeText(phone);
+    setCopiedPhoneId(name);
+    setTimeout(() => setCopiedPhoneId(null), 2000);
+  };
+
+  const handleOpenLocationModal = () => {
+    setIsLocationModalOpen(true);
+    if (!userLocation && !locationError) {
+      setIsLoadingLocation(true);
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+            setIsLoadingLocation(false);
+            setLocationError(null);
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            setLocationError("Location access denied or unavailable.");
+            setIsLoadingLocation(false);
+          }
+        );
+      } else {
+        setLocationError("Geolocation is not supported by your browser.");
+        setIsLoadingLocation(false);
+      }
+    }
+  };
+
+  const resetLocation = () => {
+    setUserLocation(null);
+    setLocationError("Manual override selected.");
+  };
 
   const prizes = [
     { id: 1, name: "Smart TV", label: "WEEKLY", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=200&h=200", bg: "bg-blue-50", labelColor: "bg-yellow-100 text-yellow-700" },
@@ -41,7 +102,7 @@ const LandingPage = () => {
       
       {/* ─── Top Notification Banner ─── */}
       <div 
-        onClick={() => setIsLocationModalOpen(true)}
+        onClick={handleOpenLocationModal}
         className="bg-[#DF2020] py-2.5 px-4 flex items-center justify-center gap-2 z-50 shadow-md cursor-pointer hover:bg-red-700 transition-colors shrink-0"
       >
         <MapPin className="w-3.5 h-3.5 text-white animate-bounce" />
@@ -186,62 +247,114 @@ const LandingPage = () => {
               <MapPin className="w-5 h-5" /> Active Centers
             </h2>
             
-            <div className="flex gap-3 mb-4">
-              <select 
-                value={selectedState} 
-                onChange={e => { setSelectedState(e.target.value); setSelectedCity("All"); }}
-                className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3"
-              >
-                <option value="Lagos">Lagos</option>
-                <option value="Abuja">Abuja</option>
-                <option value="Rivers">Rivers</option>
-              </select>
-              <select 
-                value={selectedCity} 
-                onChange={e => setSelectedCity(e.target.value)}
-                className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3"
-              >
-                <option value="All">All Cities</option>
-                <option value="Surulere">Surulere</option>
-                <option value="Ikeja">Ikeja</option>
-                <option value="Lekki">Lekki</option>
-              </select>
-            </div>
-
-            <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
-              {filteredCenters.map((center, i) => (
-                <div key={i} className="p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-200 transition-all group hover:shadow-md">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-bold text-gray-900 text-sm group-hover:text-[#DF2020] transition-colors">{center.name}</h4>
-                    <div className="flex items-center gap-1.5">
-                      <div className={`w-2 h-2 rounded-full ${center.status.includes('Open') ? 'bg-green-500' : 'bg-orange-500'}`} />
-                      <span className="text-[8px] font-black text-gray-800 uppercase tracking-wider">{center.status}</span>
-                    </div>
+            {isLoadingLocation ? (
+              <div className="flex flex-col items-center justify-center py-10">
+                <div className="w-10 h-10 border-4 border-red-100 border-t-[#DF2020] rounded-full animate-spin mb-4" />
+                <p className="text-sm font-bold text-gray-500 animate-pulse">Finding nearest centers...</p>
+              </div>
+            ) : (
+              <>
+                {(!userLocation || locationError) && (
+                  <div className="flex gap-3 mb-4">
+                    <select 
+                      value={selectedState} 
+                      onChange={e => { setSelectedState(e.target.value); setSelectedCity("All"); }}
+                      className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3"
+                    >
+                      <option value="Lagos">Lagos</option>
+                      <option value="Abuja">Abuja</option>
+                      <option value="Rivers">Rivers</option>
+                    </select>
+                    <select 
+                      value={selectedCity} 
+                      onChange={e => setSelectedCity(e.target.value)}
+                      className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block w-full p-3"
+                    >
+                      <option value="All">All Cities</option>
+                      <option value="Surulere">Surulere</option>
+                      <option value="Ikeja">Ikeja</option>
+                      <option value="Lekki">Lekki</option>
+                    </select>
                   </div>
-                  <p className="text-xs text-gray-500 mb-2">{center.address}</p>
-                  
-                  <div className="bg-white p-3 rounded-xl border border-gray-100 mb-2 text-xs">
-                    <p className="text-[9px] text-gray-500 uppercase font-black mb-1">Supervisor</p>
-                    <div className="flex justify-between">
-                      <p className="font-bold text-gray-800">{center.supervisor}</p>
-                      <p className="text-[#DF2020] font-black">{center.phone}</p>
-                    </div>
-                  </div>
+                )}
 
-                  <a 
-                    href={center.mapLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:underline"
-                  >
-                    View on Google Maps <ChevronRight className="w-3.5 h-3.5" />
-                  </a>
+                {locationError && locationError !== "Manual override selected." && (
+                  <p className="text-xs text-orange-500 font-bold mb-4 bg-orange-50 p-3 rounded-xl border border-orange-100">
+                    {locationError} Please choose manually.
+                  </p>
+                )}
+
+                {userLocation && (
+                  <div className="flex justify-between items-center mb-4 bg-green-50 p-3 rounded-xl border border-green-100">
+                    <p className="text-xs text-green-700 font-bold">Showing nearest centers</p>
+                    <button 
+                      onClick={resetLocation}
+                      className="text-xs text-green-700 underline font-black hover:text-green-800 transition-colors"
+                    >
+                      Choose manually
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                  {processedCenters.map((center, i) => (
+                    <div key={i} className="p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:border-red-200 transition-all group hover:shadow-md relative">
+                      {userLocation && i === 0 && (
+                        <div className="absolute -top-2 -right-2 bg-[#DF2020] text-white text-[9px] font-black uppercase px-2 py-1 rounded-full shadow-md">
+                          Nearest
+                        </div>
+                      )}
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-bold text-gray-900 text-sm group-hover:text-[#DF2020] transition-colors">{center.name}</h4>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {center.distance !== undefined && (
+                            <span className="text-[10px] font-bold text-gray-500 mr-1.5 bg-gray-200 px-1.5 py-0.5 rounded-md">
+                              {center.distance.toFixed(1)} km
+                            </span>
+                          )}
+                          <div className={`w-2 h-2 rounded-full ${center.status.includes('Open') ? 'bg-green-500' : 'bg-orange-500'}`} />
+                          <span className="text-[8px] font-black text-gray-800 uppercase tracking-wider">{center.status}</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{center.address}</p>
+                      
+                      <div className="bg-white p-3 rounded-xl border border-gray-100 mb-2 text-xs">
+                        <p className="text-[9px] text-gray-500 uppercase font-black mb-1">Supervisor</p>
+                        <div className="flex justify-between items-center">
+                          <p className="font-bold text-gray-800">{center.supervisor}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-[#DF2020] font-black">{center.phone}</p>
+                            <button 
+                              onClick={() => handleCopy(center.phone, center.name)}
+                              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                              title="Copy Phone"
+                            >
+                              {copiedPhoneId === center.name ? (
+                                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                              ) : (
+                                <Copy className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <a 
+                        href={center.mapLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:underline mt-1"
+                      >
+                        View on Google Maps <ChevronRight className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                  ))}
+                  {processedCenters.length === 0 && (
+                    <p className="text-center text-gray-500 text-sm py-8">No centers found in this location.</p>
+                  )}
                 </div>
-              ))}
-              {filteredCenters.length === 0 && (
-                <p className="text-center text-gray-500 text-sm py-8">No centers found in this location.</p>
-              )}
-            </div>
+              </>
+            )}
             <button 
               onClick={() => setIsLocationModalOpen(false)}
               className="w-full mt-6 bg-gray-900 text-white font-black text-xs uppercase py-4 rounded-2xl hover:bg-black transition-colors"
