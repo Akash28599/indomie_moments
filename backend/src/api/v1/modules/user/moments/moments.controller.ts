@@ -69,7 +69,7 @@ export async function listMomentsController(
       ? parsed.data
       : { limit: 20, offset: 0, currentWeek: undefined };
 
-    const { items, totalCount } = await listMomentsService(options);
+    const { items, totalCount } = await listMomentsService(options, req.user as any);
 
     // If user is logged in, resolve which moments they've liked
     const userId = req.user?.id;
@@ -79,7 +79,7 @@ export async function listMomentsController(
 
     res.json({
       success: true,
-      data: items.map((m) => ({
+      data: items.map((m: any) => ({
         id: m.id,
         userId: m.userId,
         userName: m.userName,
@@ -88,6 +88,7 @@ export async function listMomentsController(
         caption: m.caption,
         likes: m.likes,
         isLiked: likedIds.has(m.id),
+        isFriend: !!m.isFriend,
         status: m.status,
         shareUrl: getShareUrl(m.slug),
         uploadedAt: m.createdAt,

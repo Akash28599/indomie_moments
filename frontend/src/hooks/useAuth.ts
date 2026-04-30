@@ -14,7 +14,7 @@ import {
 import type { AuthUser, UserRole, Permission } from "../auth/auth.types";
 
 // Routes that don't require authentication
-const PUBLIC_ROUTES = ["/", "/login", "/register", "/admin/login"];
+const PUBLIC_ROUTES = ["/", "/login", "/register", "/admin/login", "/moments", "/share", "/leaderboard", "/winners-hub"];
 
 export function useAuth() {
   const dispatch = useAppDispatch();
@@ -31,7 +31,11 @@ export function useAuth() {
   // Auto-redirect when authentication state changes
   useEffect(() => {
     // If user was logged out (isAuthenticated = false)
-    if (!isAuthenticated && !PUBLIC_ROUTES.includes(location.pathname)) {
+    const isPublicRoute = PUBLIC_ROUTES.some(route => 
+      location.pathname === route || (route === '/share' && location.pathname.startsWith('/share/'))
+    );
+    
+    if (!isAuthenticated && !isPublicRoute) {
       // Determine which login page based on previous role
       const loginPath = admin ? "/admin/login" : "/login";
       navigate(loginPath, { replace: true });
@@ -42,19 +46,18 @@ export function useAuth() {
     try {
       if (admin) {
         await dispatch(logoutAdminThunk()).unwrap();
-        // Redux state cleared, useEffect will handle redirect
       } else if (user) {
         await dispatch(logoutUserThunk()).unwrap();
-        // Redux state cleared, useEffect will handle redirect
       }
-    } catch {
-      // Force logout even if API fails
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      // Always clear state locally
       if (admin) {
         dispatch(clearAdmin());
       } else if (user) {
         dispatch(clearUser());
       }
-      // Redux state cleared, useEffect will handle redirect
     }
   }, [admin, user, dispatch]);
 

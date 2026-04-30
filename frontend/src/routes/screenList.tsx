@@ -48,22 +48,14 @@ export const SCREEN_LIST = [
   children: [
     { index: true, element: <Home /> },
 
-    // 🔐 PROTECTED ROUTES
+    // 🔐 PROTECTED ROUTES (And Public Feeds)
     {
       path: "moments",
-      element: (
-        <ProtectedRoute role="user">
-          <IndomieMoments />
-        </ProtectedRoute>
-      ),
+      element: <IndomieMoments />,
     },
     {
       path: "leaderboard",
-      element: (
-        <ProtectedRoute role="user">
-          <LeaderBoard />
-        </ProtectedRoute>
-      ),
+      element: <LeaderBoard />,
     },
     {
       path: "upload",
@@ -77,11 +69,7 @@ export const SCREEN_LIST = [
 
     {
       path: "winners-hub",
-      element: (
-        <ProtectedRoute role="user">
-          <WinnersHub />
-        </ProtectedRoute>
-      ),
+      element: <WinnersHub />,
     },
     {
       path: "profile",

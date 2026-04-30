@@ -8,7 +8,8 @@ import {
   Star,
   X,
   Copy,
-  CheckCircle2
+  CheckCircle2,
+  Gift
 } from "lucide-react";
 import { AuthModal } from "../../auth/AuthModal";
 import { momentLogo, promo1, promo2, promo3, promo4, promo5, promo6, promo7, promo8 } from "../../../../assets";
@@ -132,7 +133,7 @@ const LandingPage = () => {
       {/* ─── Top Notification Banner ─── */}
       <div 
         onClick={handleOpenLocationModal}
-        className="bg-[#DF2020] py-2.5 px-4 flex items-center justify-center gap-2 z-50 shadow-md cursor-pointer hover:bg-red-700 transition-colors shrink-0"
+        className="animate-blink-yellow py-2.5 px-4 flex items-center justify-center gap-2 z-50 shadow-md cursor-pointer shrink-0"
       >
         <MapPin className="w-3.5 h-3.5 text-white animate-bounce" />
         <span className="text-white text-[10px] md:text-xs font-black uppercase tracking-[0.1em]">
@@ -161,9 +162,9 @@ const LandingPage = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="shrink-0 px-5 md:px-10 mb-6 md:mb-10"
+          className="shrink-0 px-5 md:px-10 mb-4 md:mb-10"
         >
-          <div className="w-full h-36 md:h-72 rounded-3xl overflow-hidden relative bg-black shadow-xl">
+          <div className="w-full h-24 md:h-72 rounded-3xl overflow-hidden relative bg-black shadow-xl">
             <AnimatePresence mode="wait">
               <motion.img
                 key={promoIndex}
@@ -173,7 +174,7 @@ const LandingPage = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.6 }}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
               />
             </AnimatePresence>
             {/* Gradient overlay */}
@@ -191,7 +192,7 @@ const LandingPage = () => {
         </motion.div>
 
         {/* ─── Hero Content Area ─── */}
-        <div className="flex-1 flex flex-col md:flex-row min-h-0 px-5 md:px-10 gap-8 md:gap-16">
+        <div className="flex-1 flex flex-col md:flex-row px-5 md:px-10 py-6 gap-8 md:gap-16">
           
           {/* LEFT SIDE: Text & CTA */}
           <div className="flex-1 flex flex-col justify-center max-w-xl">
@@ -200,13 +201,36 @@ const LandingPage = () => {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-[1.8rem] md:text-[3.5rem] font-black text-[#DF2020] leading-[1.1] tracking-tight mb-3 md:mb-6" style={{ fontFamily: "'Inter', 'Outfit', system-ui, sans-serif" }}>
+              <h1 className="text-xl md:text-[3.5rem] font-black text-[#DF2020] leading-[1.1] tracking-tight mb-1 md:mb-6" style={{ fontFamily: "'Inter', 'Outfit', system-ui, sans-serif" }}>
                 Share your Indomie moment & win!
               </h1>
               
-              <p className="text-gray-500 text-xs md:text-lg font-medium leading-relaxed mb-6 md:mb-10">
-                Upload your best Indomie moment, collect likes, and win amazing prizes every week. Join thousands of fans sharing their love for Indomie!
+              <p className="text-gray-500 text-[10px] md:text-lg font-medium leading-relaxed mb-2 md:mb-10">
+                Upload your best moment and win amazing prizes every week.
               </p>
+
+              {/* ═══ SECTION: HOW TO PARTICIPATE (Pick Your Way) ═══ */}
+              <div className="mb-2 md:mb-12">
+                <p className="text-[8px] md:text-xs font-black text-[#DF2020] uppercase tracking-[0.2em] mb-1">
+                  2 Ways to Participate
+                </p>
+                <div className="grid grid-cols-2 gap-3 md:gap-6">
+                  {/* OPTION A: Redemption Center */}
+                  <div className="bg-white border-2 border-gray-100 rounded-2xl p-3 md:p-6 flex flex-col items-center text-center gap-1.5 shadow-sm">
+                    <div className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-[#DF2020] text-white font-black text-[9px] md:text-sm flex items-center justify-center">A</div>
+                    <p className="font-black text-slate-800 text-[7px] md:text-[11px] leading-tight text-center">Submit 10 wrappers at the Center</p>
+                    <Gift className="w-3.5 h-3.5 text-[#DF2020]" />
+                  </div>
+
+                  {/* OPTION B: Upload Moments */}
+                  <div className="bg-white border-2 border-gray-100 rounded-2xl p-3 md:p-6 flex flex-col items-center text-center gap-0.5 shadow-sm">
+                    <div className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-[#DF2020] text-white font-black text-[9px] md:text-sm flex items-center justify-center">B</div>
+                    <p className="font-black text-slate-800 text-[7px] md:text-[11px] leading-tight">Upload & win up to</p>
+                    <p className="text-[#DF2020] font-black text-xs md:text-xl leading-none">₦10M</p>
+                    <p className="text-[5px] md:text-[8px] font-bold text-gray-400 uppercase">Weekly</p>
+                  </div>
+                </div>
+              </div>
 
               {/* Desktop CTA */}
               <div className="hidden md:block">
@@ -227,7 +251,7 @@ const LandingPage = () => {
           <div className="flex-1 flex flex-col justify-center min-h-0">
             {/* Prizes Section */}
             <section className="shrink-0">
-              <h2 className="text-[9px] md:text-xs font-black text-red-400 uppercase tracking-[0.2em] mb-4">
+              <h2 className="text-[8px] md:text-xs font-black text-red-400 uppercase tracking-[0.2em] mb-2">
                 Grand Prizes to be Won
               </h2>
               
@@ -240,11 +264,11 @@ const LandingPage = () => {
                     transition={{ delay: 0.4 + idx * 0.1 }}
                     className="flex-1 bg-white rounded-2xl md:rounded-3xl p-3 md:p-5 border border-gray-100 shadow-lg shadow-gray-200/50 flex flex-col items-center text-center hover:scale-105 transition-transform cursor-default"
                   >
-                    <div className="w-14 md:w-24 h-14 md:h-24 rounded-xl md:rounded-2xl overflow-hidden mb-2 md:mb-4 shadow-inner">
+                    <div className="w-10 md:w-24 h-10 md:h-24 rounded-xl md:rounded-2xl overflow-hidden mb-1.5 md:mb-4 shadow-inner">
                       <img src={prize.image} alt={prize.name} className="w-full h-full object-cover" />
                     </div>
                     <h3 className="font-bold text-gray-900 text-[10px] md:text-sm mb-1 md:mb-2">{prize.name}</h3>
-                    <span className={`${prize.labelColor} text-[7px] md:text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-wider`}>
+                    <span className={`${prize.labelColor} text-[6px] md:text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider`}>
                       {prize.label}
                     </span>
                   </motion.div>
@@ -254,8 +278,8 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* Mobile-only CTA (pinned to bottom) */}
-        <div className="md:hidden px-5 pb-6 mt-auto">
+        {/* Mobile-only CTA (pinned to bottom with clearance) */}
+        <div className="md:hidden px-5 pb-8 mt-auto">
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={() => setIsAuthModalOpen(true)}

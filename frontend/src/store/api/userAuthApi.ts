@@ -5,6 +5,7 @@ import { ROLE_PERMISSIONS } from "../../auth/permissions";
 interface RequestOTPBody {
   phoneNumber: string;
   fullName?: string;
+  referredBySlug?: string;
 }
 
 interface VerifyOTPBody {

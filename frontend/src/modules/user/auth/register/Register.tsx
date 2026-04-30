@@ -82,9 +82,18 @@ export const Register = () => {
     }
 
     try {
+      let referredBySlug = undefined;
+      if (redirectTo && redirectTo.includes("/share/")) {
+        const parts = redirectTo.split("/share/");
+        if (parts.length > 1) {
+          referredBySlug = parts[1].split("?")[0];
+        }
+      }
+
       const response = await requestOtp({
         phoneNumber: cleaned,
         fullName: name.trim(),
+        referredBySlug,
       }).unwrap();
 
       if (response.flow === "login") {

@@ -17,8 +17,8 @@ export async function requestOTPController(
   res: Response,
 ): Promise<void> {
   try {
-    const { phoneNumber, fullName } = req.body;
-    const result = await requestOTPService(phoneNumber, fullName);
+    const { phoneNumber, fullName, referredBySlug } = req.body;
+    const result = await requestOTPService(phoneNumber, fullName, referredBySlug);
     successResponse(res, {
       flow: result.flow,
       message: result.message,

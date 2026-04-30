@@ -104,7 +104,7 @@ const Dashboard = () => {
         - On mobile: h-[100dvh], overflow-hidden, flex-col
         - On desktop: auto height, padding-y, centered max-width
       */}
-      <div className="flex-1 max-w-md md:max-w-6xl mx-auto w-full px-4 pt-1 md:pt-10 pb-4 md:pb-16 flex flex-col md:flex-row gap-2 md:gap-12 overflow-hidden">
+      <div className="flex-1 max-w-md md:max-w-6xl mx-auto w-full px-4 pt-1 md:pt-10 pb-1 md:pb-16 flex flex-col md:flex-row gap-1.5 md:gap-12 overflow-hidden">
         
         {/* LEFT COLUMN: Feed & Info (Priority on Mobile) */}
         <div className="flex-initial md:flex-1 flex flex-col gap-4 md:gap-8 min-w-0">
@@ -115,7 +115,7 @@ const Dashboard = () => {
               INDOMIE MOMENTS
             </h2>
             
-            <div className="relative w-full h-24 md:h-64 rounded-xl md:rounded-[2.5rem] overflow-hidden shadow-lg bg-black group">
+            <div className="relative w-full h-20 md:h-64 rounded-xl md:rounded-[2.5rem] overflow-hidden shadow-lg bg-black group">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentMomentIndex}
@@ -125,7 +125,7 @@ const Dashboard = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-contain"
                 />
               </AnimatePresence>
               <div className="absolute inset-x-0 bottom-0 p-2 md:p-8 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-between">
@@ -133,55 +133,7 @@ const Dashboard = () => {
                     <p className="text-white font-black text-[10px] md:text-2xl mb-0">{FEATURED_MOMENTS[currentMomentIndex].title}</p>
                     <p className="text-white/60 text-[6px] md:text-xs uppercase font-bold tracking-widest tracking-tight">Featured Story</p>
                   </div>
-                  <motion.div 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => navigate("/moments")}
-                    className="w-6 h-6 md:w-14 md:h-14 rounded-full bg-white text-black flex items-center justify-center cursor-pointer shadow-xl transition-all"
-                  >
-                      <Plus className="w-3.5 h-3.5 md:w-6 md:h-6" />
-                  </motion.div>
               </div>
-            </div>
-          </section>
-
-          {/* ═══ SECTION: HOW TO PARTICIPATE (Compact) ═══ */}
-          <section className="shrink-0">
-            <h2 className="text-[8px] md:text-xs font-black text-gray-500 uppercase tracking-widest mb-1 md:mb-6">
-              How to participate?
-            </h2>
-            <div className="grid grid-cols-2 gap-2 md:gap-6">
-              <motion.div 
-                whileHover={{ y: -5 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigate("/winners-hub")}
-                className="bg-[#FACC15] rounded-xl md:rounded-3xl p-2 md:p-8 h-14 md:h-48 flex items-center md:flex-col md:justify-between gap-2 shadow-sm md:shadow-lg md:shadow-yellow-200/50 cursor-pointer relative overflow-hidden group"
-              >
-                <div className="w-7 h-7 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-black/10 flex items-center justify-center text-black shrink-0">
-                  <Gift className="w-4 h-4 md:w-6 md:h-6" />
-                </div>
-                <div>
-                  <h3 className="font-black text-slate-900 text-[9px] md:text-lg leading-tight mb-0.5">Redemption Center</h3>
-                  <p className="text-[6px] md:text-xs font-bold text-slate-900/40 uppercase">Claim Rewards</p>
-                </div>
-                <div className="hidden md:block absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors" />
-              </motion.div>
-
-              <motion.div 
-                whileHover={{ y: -5 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigate("/moments")}
-                className="bg-white border border-slate-100 rounded-xl md:rounded-3xl p-2 md:p-8 h-14 md:h-48 flex items-center md:flex-col md:justify-between gap-2 shadow-sm md:shadow-xl md:shadow-slate-200/20 cursor-pointer relative overflow-hidden group"
-              >
-                 <div className="w-7 h-7 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-pink-50 flex items-center justify-center text-[#DF2020] shrink-0">
-                    <Flame className="w-4 h-4 md:w-6 md:h-6 fill-[#DF2020]" />
-                 </div>
-                 <div>
-                    <h3 className="font-black text-slate-900 text-[9px] md:text-lg leading-tight mb-0.5">Share & Win</h3>
-                    <p className="text-[6px] md:text-xs font-bold text-slate-400 uppercase">3M Weekly</p>
-                 </div>
-                 <div className="hidden md:block absolute top-0 right-0 w-24 h-24 bg-pink-50/50 blur-3xl group-hover:bg-pink-100/50 transition-colors" />
-              </motion.div>
             </div>
           </section>
 
@@ -194,16 +146,16 @@ const Dashboard = () => {
           <motion.section 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="bg-white rounded-2xl md:rounded-[2.5rem] p-3 md:p-8 shadow-xl border border-slate-100 shrink-0"
+            className="bg-white rounded-2xl md:rounded-[2.5rem] p-2 md:p-8 shadow-xl border border-slate-100 shrink-0"
           >
-            <div className="flex items-center gap-2 mb-2 md:mb-6">
+            <div className="flex items-center gap-2 mb-1 md:mb-6">
               <div className="w-5 h-5 md:w-8 md:h-8 rounded bg-[#DF2020] flex items-center justify-center text-white">
                   <Edit3 className="w-3 h-3 md:w-5 md:h-5" />
               </div>
-              <h2 className="font-black text-slate-800 text-[10px] md:text-base uppercase tracking-wider">Share New Moment</h2>
+              <h2 className="font-black text-slate-800 text-[9px] md:text-base uppercase tracking-wider">Share your Indomie moment here</h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-2 md:space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-1.5 md:space-y-4">
               <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -214,14 +166,14 @@ const Dashboard = () => {
               
               <div 
                 onClick={handleImageClick}
-                className="w-full border border-dashed border-pink-200 bg-pink-50/30 rounded-xl md:rounded-2xl h-24 md:h-40 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-pink-50 transition-colors group overflow-hidden"
+                className="w-full border border-dashed border-pink-200 bg-pink-50/30 rounded-xl md:rounded-2xl h-16 md:h-40 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-pink-50 transition-colors group overflow-hidden"
               >
                 {selectedImage ? (
                   <img src={selectedImage} className="w-full h-full object-cover" alt="Selected" />
                 ) : (
                   <>
                       <UploadCloud className="w-4 h-4 md:w-10 md:h-10 text-[#DF2020] group-hover:scale-110 transition-transform" />
-                      <p className="text-[8px] md:text-sm font-black text-slate-600">Tap to Upload Photo</p>
+                      <p className="text-[7px] md:text-sm font-black text-slate-600">Tap to Upload Photo</p>
                   </>
                 )}
               </div>
@@ -231,7 +183,7 @@ const Dashboard = () => {
                   onChange={(e) => setStory(e.target.value)}
                   placeholder="Explain vibe... (Required)"
                   required
-                  className="w-full bg-slate-50 border border-slate-100 rounded-lg md:rounded-xl px-3 py-2 md:px-4 md:py-3 text-[10px] md:text-sm font-medium text-slate-900 placeholder-slate-300 focus:outline-none h-16 md:h-28 resize-none shadow-inner"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-lg md:rounded-xl px-3 py-1.5 md:px-4 md:py-3 text-[9px] md:text-sm font-medium text-slate-900 placeholder-slate-300 focus:outline-none h-12 md:h-28 resize-none shadow-inner"
               />
 
               <button 
@@ -244,6 +196,47 @@ const Dashboard = () => {
               </button>
             </form>
           </motion.section>
+
+          {/* ═══ SECTION: HOW TO PARTICIPATE (Pick Your Way) ═══ */}
+          <section className="shrink-0">
+            <h2 className="text-[9px] md:text-sm font-black text-[#DF2020] uppercase tracking-widest mb-0.5 md:mb-2 text-center">
+              Share your Indomie moment here & win instantly!
+            </h2>
+            <p className="text-[6px] md:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 md:mb-6 text-center">
+              Pick your way to participate
+            </p>
+            <div className="grid grid-cols-2 gap-2 md:gap-6">
+              {/* OPTION A: Redemption Center */}
+              <motion.div 
+                whileHover={{ y: -5 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate("/winners-hub")}
+                className="bg-white border-2 border-gray-200 rounded-xl md:rounded-3xl p-2 md:p-6 flex flex-col items-center text-center gap-1 md:gap-3 shadow-sm hover:shadow-md hover:border-[#DF2020] cursor-pointer relative overflow-hidden group transition-all"
+              >
+                <div className="w-6 h-6 md:w-12 md:h-12 rounded-full bg-[#DF2020] text-white font-black text-xs md:text-xl flex items-center justify-center shadow-md">
+                  A
+                </div>
+                <h3 className="font-black text-slate-900 text-[7px] md:text-sm leading-tight">Submit 10 wrappers at the Center</h3>
+                <div className="w-6 h-6 md:w-10 md:h-10 rounded-lg bg-red-50 flex items-center justify-center text-[#DF2020] shrink-0">
+                  <Gift className="w-3.5 h-3.5 md:w-6 md:h-6" />
+                </div>
+              </motion.div>
+
+              {/* OPTION B: Upload Moments */}
+              <motion.div 
+                whileHover={{ y: -5 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate("/upload")}
+                className="bg-white border-2 border-gray-200 rounded-xl md:rounded-3xl p-2 md:p-6 flex flex-col items-center text-center gap-1 md:gap-3 shadow-sm hover:shadow-md hover:border-[#DF2020] cursor-pointer relative overflow-hidden group transition-all"
+              >
+                <div className="w-6 h-6 md:w-12 md:h-12 rounded-full bg-[#DF2020] text-white font-black text-xs md:text-xl flex items-center justify-center shadow-md">
+                  B
+                </div>
+                <h3 className="font-black text-slate-900 text-[7px] md:text-sm leading-tight">Upload moments & win up to</h3>
+                <p className="text-[#DF2020] font-black text-sm md:text-2xl leading-none">₦10M</p>
+              </motion.div>
+            </div>
+          </section>
 
           {/* ═══ SECTION: YOUR ACTIVE MOMENT (Visible after submission) ═══ */}
           {submittedMoment && (
@@ -285,13 +278,25 @@ const Dashboard = () => {
                         
                         {submittedMoment.status === 'approved' && (
                           <div className="flex items-center gap-2">
-                             <motion.button whileTap={{ scale: 0.9 }} className="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-sm">
+                             <motion.button 
+                               onClick={() => window.open(`https://wa.me/?text=Check out my Indomie Moment! ${window.location.origin}`, '_blank')}
+                               whileTap={{ scale: 0.9 }} 
+                               className="w-6 h-6 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-sm"
+                             >
                                 <Share2 className="w-3 h-3" />
                              </motion.button>
-                             <motion.button whileTap={{ scale: 0.9 }} className="w-6 h-6 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-sm">
+                             <motion.button 
+                               onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${window.location.origin}`, '_blank')}
+                               whileTap={{ scale: 0.9 }} 
+                               className="w-6 h-6 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-sm"
+                             >
                                 <span className="text-[10px] font-black">f</span>
                              </motion.button>
-                             <motion.button whileTap={{ scale: 0.9 }} className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center shadow-sm">
+                             <motion.button 
+                               onClick={() => window.open(`https://www.tiktok.com/share?url=${window.location.origin}`, '_blank')}
+                               whileTap={{ scale: 0.9 }} 
+                               className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center shadow-sm"
+                             >
                                 <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current">
                                     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.86 4.51A6.3 6.3 0 0 0 16.25 15.66V7.12A8.16 8.16 0 0 0 21 8.35v-3a4.81 4.81 0 0 1-1.41-1.66z"/>
                                 </svg>

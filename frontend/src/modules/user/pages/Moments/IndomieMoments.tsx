@@ -1,8 +1,9 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, MessageCircle, Share2, Music, MapPin, ChevronLeft, Users, Globe } from "lucide-react";
+import { Heart, Music, MapPin, ChevronLeft, Users } from "lucide-react";
 import { useListMomentsQuery, useToggleLikeMutation } from "@/store";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../hooks/useAuth";
 
 /**
  * IndomieMoments – TikTok-style full-screen vertical feed.
@@ -23,16 +24,17 @@ const DUMMY_MOMENTS = [
 const IndomieMoments = () => {
   const navigate = useNavigate();
   const { data: momentsData, isLoading } = useListMomentsQuery({ limit: 20, offset: 0 });
-  const [activeTab, setActiveTab] = useState<"friends" | "foryou">("friends");
   const scrollRef = useRef(null);
 
   const apiMoments = momentsData?.items || [];
   const allMoments = apiMoments.length > 0 ? apiMoments : DUMMY_MOMENTS;
 
-  const friendMoments = allMoments.filter((m: any) => m.isFriend || false);
-  const forYouMoments = allMoments;
-
-  const moments = activeTab === "friends" ? (friendMoments.length > 0 ? friendMoments : forYouMoments) : forYouMoments;
+  // Sort: friends' posts come first so shared moments appear at the top
+  const sortedMoments = [...allMoments].sort((a: any, b: any) => {
+    if (a.isFriend && !b.isFriend) return -1;
+    if (!a.isFriend && b.isFriend) return 1;
+    return 0;
+  });
 
   if (isLoading) {
     return (
@@ -53,7 +55,7 @@ const IndomieMoments = () => {
 
       {/* ─── MOMENTS FEED CONTAINER ─── */}
       <div 
-        className="w-full md:max-w-[450px] h-full bg-[#FFF8F0] relative overflow-y-scroll scrollbar-none z-10 pt-24 pb-10 px-4 flex flex-col gap-6" 
+        className="w-full md:max-w-[450px] h-full bg-[#FFF8F0] relative overflow-y-scroll scrollbar-none z-10 pt-20 pb-10 px-4 flex flex-col gap-6" 
         ref={scrollRef}
       >
         {/* Feed Header */}
@@ -64,34 +66,16 @@ const IndomieMoments = () => {
           >
             <ChevronLeft className="text-gray-900 w-6 h-6" />
           </button>
-          <div className="flex gap-1 bg-white/80 backdrop-blur-md rounded-full p-1 pointer-events-auto border border-gray-200 shadow-sm">
-            <button 
-              onClick={() => setActiveTab("friends")}
-              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
-                activeTab === "friends" 
-                  ? "bg-[#DF2020] text-white shadow-md" 
-                  : "text-gray-500 hover:text-gray-900"
-              }`}
-            >
-              <Users className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
-              Friends
-            </button>
-            <button 
-              onClick={() => setActiveTab("foryou")}
-              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${
-                activeTab === "foryou" 
-                  ? "bg-[#DF2020] text-white shadow-md" 
-                  : "text-gray-500 hover:text-gray-900"
-              }`}
-            >
-              <Globe className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
-              For You
-            </button>
+          <div className="bg-white/80 backdrop-blur-md rounded-full px-5 py-2 pointer-events-auto border border-gray-200 shadow-sm">
+            <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-[#DF2020]" />
+              This Week's Moments
+            </span>
           </div>
           <div className="w-10" />
         </div>
 
-        {moments.map((moment) => (
+        {sortedMoments.map((moment) => (
           <MomentPost key={moment.id} moment={moment} />
         ))}
       </div>
@@ -117,13 +101,23 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
   const [liked, setLiked] = useState(false);
   const [showHeart, setShowHeart] = useState(false);
   const [toggleLike] = useToggleLikeMutation();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Import will be added above
+
+  const handleLike = () => {
+    if (!isAuthenticated) {
+      navigate('/login?message=Please%20login%20to%20like%20moments');
+      return;
+    }
+    if (!liked) {
+      setLiked(true);
+      toggleLike(moment.id);
+    }
+  };
 
   const handleDoubleTap = (e: React.MouseEvent) => {
     if (e.detail === 2) {
-      if (!liked) {
-        setLiked(true);
-        toggleLike(moment.id);
-      }
+      handleLike();
       setShowHeart(true);
       setTimeout(() => setShowHeart(false), 1000);
     }
@@ -160,7 +154,7 @@ const MomentPost: React.FC<MomentPostProps> = ({ moment }) => {
         <div className="flex flex-col items-center gap-1.5">
           <motion.button 
             whileTap={{ scale: 0.8 }}
-            onClick={() => { setLiked(!liked); toggleLike(moment.id); }}
+            onClick={handleLike}
             className={`p-3.5 rounded-full transition-all border border-white/10 ${liked ? 'bg-[#E2231A] text-white shadow-lg shadow-red-500/40' : 'bg-black/40 backdrop-blur-md text-white hover:bg-black/60'}`}
           >
             <Heart className={`w-6 h-6 ${liked ? 'fill-current' : ''}`} />

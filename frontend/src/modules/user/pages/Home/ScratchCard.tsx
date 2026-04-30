@@ -19,8 +19,15 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
   const [isScratching, setIsScratching] = useState(false);
   const [scratchPercent, setScratchPercent] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [prize] = useState(() => getRandomPrize());
+  const [prize] = useState(() => ({ label: "₦400 AIRTIME" }));
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+
+  // OTP Flow State
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [claimSuccess, setClaimSuccess] = useState(false);
 
   const CANVAS_W = 320;
   const CANVAS_H = 320; // Squared for better look
@@ -80,13 +87,14 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) return 0;
     try {
-      const data = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H).data;
+      const imageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+      const data = imageData.data;
       let cleared = 0;
-      // Sample every 4th pixel for performance
-      for (let i = 3; i < data.length; i += 16) {
+      // Check every pixel's alpha channel
+      for (let i = 3; i < data.length; i += 4) {
         if (data[i] === 0) cleared++;
       }
-      return (cleared / (CANVAS_W * CANVAS_H / 4)) * 100;
+      return (cleared / (CANVAS_W * CANVAS_H)) * 100;
     } catch {
       return 0;
     }
@@ -97,15 +105,16 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
       const ctx = ctxRef.current;
       if (!ctx || revealed) return;
       ctx.beginPath();
-      ctx.arc(x, y, 30, 0, Math.PI * 2);
+      ctx.arc(x, y, 35, 0, Math.PI * 2);
       ctx.fill();
 
       scratchCountRef.current += 1;
-      // Only check progress every 5 strokes for performance
-      if (scratchCountRef.current % 5 === 0) {
+      // Check progress every 2 strokes
+      if (scratchCountRef.current % 2 === 0) {
         const pct = calcProgress();
         setScratchPercent(pct);
-        if (pct > 25) setRevealed(true);
+        // Reveal if 10% cleared OR after 12 solid strokes (fallback)
+        if (pct > 10 || scratchCountRef.current > 12) setRevealed(true);
       }
     },
     [revealed, calcProgress]
@@ -151,6 +160,26 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
     }
   };
 
+  const handleSendOtp = () => {
+    if (!phoneNumber || phoneNumber.length < 10) return;
+    setIsProcessing(true);
+    // Mock API call to MobiFin
+    setTimeout(() => {
+      setOtpSent(true);
+      setIsProcessing(false);
+    }, 1500);
+  };
+
+  const handleVerifyOtp = () => {
+    if (!otp || otp.length < 4) return;
+    setIsProcessing(true);
+    // Mock API call to MobiFin
+    setTimeout(() => {
+      setClaimSuccess(true);
+      setIsProcessing(false);
+    }, 1500);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -168,7 +197,7 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                </button>
                <div className="bg-red-50 px-4 py-1.5 rounded-full border border-red-100 flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">Secret Reward</span>
+                  <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">Instant Reward</span>
                </div>
             </div>
 
@@ -232,34 +261,89 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                     <Sparkles className="absolute bottom-4 right-4 w-5 h-5 text-white/40 animate-pulse delay-700" />
                   </div>
                 )}
+
+                {/* Download Button (Only visible when revealed) */}
+                {revealed && (
+                  <button
+                    data-html2canvas-ignore
+                    onClick={downloadCard}
+                    className="absolute top-4 right-4 z-30 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-[#DF2020] hover:bg-white hover:scale-110 transition-all active:scale-95 border border-red-50"
+                    title="Download Winning Card"
+                  >
+                    <Download className="w-5 h-5" />
+                  </button>
+                )}
               </div>
 
               {/* Bottom Actions */}
               <div className="mt-8 flex flex-col gap-3">
                 {revealed ? (
-                  <>
-                    <motion.button
+                  claimSuccess ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex flex-col gap-3"
+                    >
+                      <div className="bg-green-50 text-green-700 py-3 rounded-xl font-bold text-sm border border-green-200">
+                        Airtime Credited Successfully! ✅
+                      </div>
+                      <button
+                        onClick={onClose}
+                        className="w-full bg-[#DF2020] text-white py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl active:scale-[0.98] transition-transform"
+                      >
+                        Close
+                      </button>
+                    </motion.div>
+                  ) : !otpSent ? (
+                    <motion.div
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      onClick={downloadCard}
-                      className="w-full bg-[#FFD700] text-gray-900 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-yellow-200 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
+                      className="flex flex-col gap-2"
                     >
-                      <Download className="w-4 h-4" /> Download Card
-                    </motion.button>
-                    <motion.button
+                      <p className="text-xs font-bold text-gray-500 uppercase">Enter phone number to claim</p>
+                      <input
+                        type="tel"
+                        placeholder="e.g. 08012345678"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl text-center font-bold text-gray-900 focus:outline-none focus:border-[#DF2020] focus:ring-1 focus:ring-[#DF2020]"
+                      />
+                      <button
+                        onClick={handleSendOtp}
+                        disabled={isProcessing || phoneNumber.length < 10}
+                        className="w-full bg-[#DF2020] text-white py-3 rounded-xl font-black text-sm uppercase tracking-widest shadow-md disabled:opacity-50 active:scale-[0.98] transition-all mt-1"
+                      >
+                        {isProcessing ? "Sending..." : "Send OTP"}
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <motion.div
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.1 }}
-                      onClick={onClose}
-                      className="w-full bg-[#DF2020] text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-red-200 active:scale-[0.98] transition-transform"
+                      className="flex flex-col gap-2"
                     >
-                      Claim & Close <span className="ml-2">🎁</span>
-                    </motion.button>
-                  </>
+                      <p className="text-xs font-bold text-gray-500 uppercase">Enter OTP sent to your number</p>
+                      <input
+                        type="text"
+                        placeholder="Enter 4-digit OTP"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        maxLength={4}
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl text-center font-black text-xl text-gray-900 tracking-[0.5em] focus:outline-none focus:border-[#DF2020] focus:ring-1 focus:ring-[#DF2020]"
+                      />
+                      <button
+                        onClick={handleVerifyOtp}
+                        disabled={isProcessing || otp.length < 4}
+                        className="w-full bg-[#DF2020] text-white py-3 rounded-xl font-black text-sm uppercase tracking-widest shadow-md disabled:opacity-50 active:scale-[0.98] transition-all mt-1"
+                      >
+                        {isProcessing ? "Verifying..." : "Verify & Credit"}
+                      </button>
+                    </motion.div>
+                  )
                 ) : (
                   <div className="flex items-center justify-center gap-2 text-xs font-black text-gray-300 uppercase tracking-widest">
                     <Users className="w-4 h-4" />
-                    <span>Join 5,402 other winners</span>
+                    <span>INDOMIE MOMENTS</span>
                   </div>
                 )}
               </div>

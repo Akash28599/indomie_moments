@@ -74,6 +74,7 @@ function validatePhoneNumber(phoneNumber: string): boolean {
 export async function requestOTPService(
   phoneNumber: string,
   fullName?: string,
+  referredBySlug?: string,
 ) {
   try {
     // Step 1: Validate inputs
@@ -100,6 +101,26 @@ export async function requestOTPService(
       }
     }
 
+    // Resolve referredBy using slug
+    let referredByUserId: string | undefined = undefined;
+    if (referredBySlug) {
+      try {
+        // We'll dynamically import db to avoid cyclic dependencies
+        const { db } = require("../../../../../db");
+        const { moments } = require("../../../../../db/schema");
+        const { eq } = require("drizzle-orm");
+        
+        const referringMoment = await db.query.moments.findFirst({
+          where: eq(moments.slug, referredBySlug),
+        });
+        if (referringMoment) {
+          referredByUserId = referringMoment.userId;
+        }
+      } catch (e) {
+        logger.warn("Failed to resolve referredBySlug", { referredBySlug, error: e });
+      }
+    }
+
     // Step 3: Check if user exists
     const existingUser = await findByPhoneNumberRepo(cleanPhone);
 
@@ -121,7 +142,8 @@ export async function requestOTPService(
           phoneNumber: cleanPhone,
           fullName: "Test User",
           status: "verified",
-        });
+          referredBy: referredByUserId,
+        } as any);
       } else {
         // New user without full name — redirect to register
         logger.warn("Request OTP: New user missing full name", { phone: cleanPhone });
@@ -151,7 +173,7 @@ export async function requestOTPService(
     }
 
     // Step 7: Save OTP to database
-    await saveOTPRepo(cleanPhone, code, pinId, OTP_EXPIRATION_MINUTES, fullName);
+    await saveOTPRepo(cleanPhone, code, pinId, OTP_EXPIRATION_MINUTES, fullName, referredByUserId);
 
     logger.info("Request OTP: OTP sent successfully", {
       phone: cleanPhone,
