@@ -113,7 +113,7 @@ function getJwtConsumerSecret(): string {
 export const config = {
   nodeEnv: env.NODE_ENV,
   port: env.PORT,
-  isDevelopment: env.NODE_ENV === "development",
+  isDevelopment: env.NODE_ENV === "development" || env.NODE_ENV === "local",
   isProduction: env.NODE_ENV === "production",
   otpTestMode: env.OTP_TEST_MODE,
   timezone: env.TIMEZONE,

@@ -47,20 +47,20 @@ export const Header = ({ config }: HeaderProps) => {
 
   const handleLogout = async () => {
     try {
-      if (role === "admin") {
+      const is_admin = role === "admin";
+      // Navigate first
+      navigate(is_admin ? "/admin/login" : "/", { replace: true });
+      
+      if (is_admin) {
         await dispatch(logoutAdminThunk()).unwrap();
-        navigate("/admin/login", { replace: true });
       } else {
         await dispatch(logoutUserThunk()).unwrap();
-        navigate("/", { replace: true });
       }
     } catch {
       if (role === "admin") {
         dispatch(clearAdmin());
-        navigate("/admin/login", { replace: true });
       } else {
         dispatch(clearUser());
-        navigate("/", { replace: true });
       }
     }
   };
@@ -85,11 +85,11 @@ export const Header = ({ config }: HeaderProps) => {
             
             {/* Mobile Header (Client UI Match) */}
             <div className="flex w-full items-center justify-between md:hidden py-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
                 <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
                   <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" className="w-full h-full object-cover" />
                 </div>
-                <img src={momentLogo} alt="Indomie Moments" className="h-8 w-auto object-contain" />
+                <img src={momentLogo} alt="Indomie Moments" className="h-10 w-auto object-contain" />
               </div>
 
               {isAuthenticated ? (

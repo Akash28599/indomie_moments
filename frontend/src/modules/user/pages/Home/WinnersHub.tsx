@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, X, Play, Package, MapPin, Trophy, Star, ChevronRight, Navigation, Copy, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { noodles } from "../../../../assets";
+import { redemptionCenters } from "./constant/location.constant";
 
 const STEPS = [
   {
@@ -50,13 +51,9 @@ const WinnersHub = () => {
   const [isLocating, setIsLocating] = useState(false);
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
-  const centers = [
-    { id: 1, state: "Lagos", city: "Surulere", name: "Surulere Hub", address: "45 Adeniran Ogunsanya St, Surulere", supervisor: "Mr. Adebayo", phone: "+234 801 234 5678", mapLink: "https://maps.google.com/?q=45+Adeniran+Ogunsanya+St+Surulere", status: "Open Now", time: "8AM - 6PM", lat: 6.495, lng: 3.351 },
-    { id: 2, state: "Lagos", city: "Ikeja", name: "Ikeja Mega Plaza", address: "Obafemi Awolowo Way, Ikeja", supervisor: "Mrs. Chioma", phone: "+234 802 345 6789", mapLink: "https://maps.google.com/?q=Obafemi+Awolowo+Way+Ikeja", status: "Open Now", time: "9AM - 8PM", lat: 6.601, lng: 3.351 },
-    { id: 3, state: "Lagos", city: "Lekki", name: "Lekki Phase 1", address: "Admiralty Way, Beside City Dia", supervisor: "Mr. Tunde", phone: "+234 803 456 7890", mapLink: "https://maps.google.com/?q=Admiralty+Way+Lekki", status: "Closing Soon", time: "8AM - 5PM", lat: 6.444, lng: 3.473 }
-  ];
 
-  const filteredCenters = centers.filter(c => c.state === selectedState && (selectedCity === "All" || c.city === selectedCity));
+
+  const filteredCenters = redemptionCenters.filter(c => c.state === selectedState && (selectedCity === "All" || c.city === selectedCity));
 
   const handleGetNearest = () => {
     setIsLocating(true);
@@ -68,10 +65,10 @@ const WinnersHub = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        let nearest = centers[0];
+        let nearest = redemptionCenters[0];
         let minDistance = Infinity;
 
-        centers.forEach(c => {
+        redemptionCenters.forEach(c => {
           const dist = Math.hypot(c.lat - latitude, c.lng - longitude);
           if (dist < minDistance) {
             minDistance = dist;

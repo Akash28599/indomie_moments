@@ -65,9 +65,16 @@ export async function listMomentsService(options: {
   currentWeek?: boolean;
   limit: number;
   offset: number;
-}) {
+}, user?: { id: string; referredBy?: string | null }) {
   const { items, totalCount } = await listApprovedMomentsRepo(options);
-  return { items, totalCount };
+  
+  // Attach isFriend flag
+  const mappedItems = items.map(item => ({
+    ...item,
+    isFriend: user?.referredBy ? item.userId === user.referredBy : false
+  }));
+
+  return { items: mappedItems, totalCount };
 }
 
 export async function getMomentBySlugService(slug: string) {

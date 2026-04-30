@@ -35,6 +35,7 @@ export async function saveOTPRepo(
   pinId: string,
   expiresInMinutes: number = 5,
   fullName?: string,
+  referredBy?: string,
 ): Promise<void> {
   const expiresAt = new Date();
   expiresAt.setMinutes(expiresAt.getMinutes() + expiresInMinutes);
@@ -50,7 +51,8 @@ export async function saveOTPRepo(
         phoneNumber,
         fullName: fullName?.trim() || null,
         status: "pending",
-      })
+        referredBy,
+      } as any)
       .returning();
     
     existingUser = newUser[0];

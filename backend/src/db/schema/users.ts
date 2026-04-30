@@ -23,6 +23,7 @@ export const users = pgTable("users", {
   facebookId: varchar("facebook_id", { length: 255 }).unique(),
   avatar: varchar("avatar", { length: 500 }),
   campaignId: uuid("campaign_id").references(() => campaigns.id),
+  referredBy: uuid("referred_by"), // Self-referencing column to track who invited them
   fullName: varchar("fullName", { length: 255 }),
   status: varchar("status", { length: 20 }).default("pending").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -20,8 +20,8 @@ export const RankingTable: React.FC<RankingTableProps> = ({ data }) => {
   if (!data.length) return null;
 
   return (
-    <div className="w-full flex flex-col overflow-hidden">
-      <div className="bg-[#F9FAFB] px-3 py-2 border-y border-gray-100 w-full">
+    <div className="w-full">
+      <div className="bg-[#F9FAFB] px-3 py-1.5 border-y border-gray-100 w-full">
         <h2 className="text-[9px] font-black uppercase tracking-widest text-gray-500">Current Standings</h2>
       </div>
 
@@ -32,7 +32,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({ data }) => {
             <Link
               key={moment.id}
               to={`/share/${moment.slug}`}
-              className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors active:bg-gray-100 w-full overflow-hidden"
+              className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors active:bg-gray-100 w-full overflow-hidden"
             >
               {/* Rank */}
               <div className="w-5 flex-shrink-0 flex justify-center items-center">
@@ -44,7 +44,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({ data }) => {
               </div>
 
               {/* Thumbnail */}
-              <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200">
+              <div className="w-7 h-7 rounded-md overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200">
                 <img
                   src={moment.imageUrl || "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?auto=format&fit=crop&q=80"}
                   alt={moment.userName}
@@ -59,10 +59,6 @@ export const RankingTable: React.FC<RankingTableProps> = ({ data }) => {
                   <h3 className="font-bold text-gray-900 text-[11px] truncate leading-tight">
                     {moment.userName || "Fan"}
                   </h3>
-                  <div className="flex items-center gap-0.5 text-[#DF2020] flex-shrink-0">
-                    <Heart className="w-2.5 h-2.5 fill-current" />
-                    <span className="font-black text-[10px] whitespace-nowrap">{moment.likes?.toLocaleString() || 0}</span>
-                  </div>
                 </div>
                 {/* Caption */}
                 <p className="text-[8px] font-medium text-gray-400 truncate mt-0.5">

@@ -95,3 +95,11 @@
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
+/* ─── Blink Yellow ─── */
+@keyframes blinkYellow {
+  0%, 100% { background-color: #DF2020; }
+  50% { background-color: #FFD700; color: #DF2020; }
+}
+.animate-blink-yellow {
+  animation: blinkYellow 1.5s ease-in-out infinite;
+}
