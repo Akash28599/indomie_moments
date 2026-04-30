@@ -203,9 +203,9 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 {/* Footer Links */}
                 <p className="text-[10px] text-center text-gray-400 font-medium px-4 leading-relaxed">
                   By continuing, you agree to our {" "}
-                  <a href="#" className="text-gray-600 font-bold underline">Terms of Service</a> {" "}
+                  <a href="/terms" className="text-gray-600 font-bold underline hover:text-[#DF2020] transition-colors">Terms of Service</a> {" "}
                   and {" "}
-                  <a href="#" className="text-gray-600 font-bold underline">Privacy Policy</a>.
+                  <a href="/privacy-policy" className="text-gray-600 font-bold underline hover:text-[#DF2020] transition-colors">Privacy Policy</a>.
                 </p>
               </form>
             ) : (

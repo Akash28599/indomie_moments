@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { X, ArrowLeft, Gift, Users, Sparkles, Trophy, Download } from "lucide-react";
+import { X, Sparkles, Trophy, Download, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getRandomPrize } from "./constant/scratchCard.constant";
 import html2canvas from "html2canvas";
 
 interface ScratchCardProps {
@@ -10,8 +9,7 @@ interface ScratchCardProps {
 }
 
 /**
- * ScratchCard – Interactive scratch-to-reveal prize modal.
- * Upgraded with Framer Motion and premium aesthetics.
+ * ScratchCard – Simplified flow: Scratch -> Confirm Number -> Success.
  */
 export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -22,15 +20,13 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
   const [prize] = useState(() => ({ label: "₦400 AIRTIME" }));
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
-  // OTP Flow State
+  // Claim Flow State
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState(false);
 
   const CANVAS_W = 320;
-  const CANVAS_H = 320; // Squared for better look
+  const CANVAS_H = 320;
   const scratchCountRef = useRef(0);
 
   const initCanvas = useCallback(() => {
@@ -43,16 +39,16 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
 
     // Premium Golden Gradient
     const grad = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
-    grad.addColorStop(0, "#D4AF37"); // Gold
+    grad.addColorStop(0, "#D4AF37");
     grad.addColorStop(0.2, "#FFDF00"); 
-    grad.addColorStop(0.5, "#B8860B"); // Dark Gold
+    grad.addColorStop(0.5, "#B8860B");
     grad.addColorStop(0.8, "#FFD700");
     grad.addColorStop(1, "#D4AF37");
     
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-    // Cross-hatch texture for better feel
+    // Texture
     ctx.strokeStyle = "rgba(0,0,0,0.05)";
     ctx.lineWidth = 1;
     for (let i = -CANVAS_W; i < CANVAS_W + CANVAS_H; i += 10) {
@@ -76,6 +72,7 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
     if (isOpen) {
       setRevealed(false);
       setScratchPercent(0);
+      setClaimSuccess(false);
       const t = setTimeout(initCanvas, 150);
       return () => clearTimeout(t);
     }
@@ -90,7 +87,6 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
       const imageData = ctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
       const data = imageData.data;
       let cleared = 0;
-      // Check every pixel's alpha channel
       for (let i = 3; i < data.length; i += 4) {
         if (data[i] === 0) cleared++;
       }
@@ -109,11 +105,9 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
       ctx.fill();
 
       scratchCountRef.current += 1;
-      // Check progress every 2 strokes
       if (scratchCountRef.current % 2 === 0) {
         const pct = calcProgress();
         setScratchPercent(pct);
-        // Reveal if 10% cleared OR after 12 solid strokes (fallback)
         if (pct > 10 || scratchCountRef.current > 12) setRevealed(true);
       }
     },
@@ -160,20 +154,10 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
     }
   };
 
-  const handleSendOtp = () => {
+  const handleClaimAirtime = () => {
     if (!phoneNumber || phoneNumber.length < 10) return;
     setIsProcessing(true);
-    // Mock API call to MobiFin
-    setTimeout(() => {
-      setOtpSent(true);
-      setIsProcessing(false);
-    }, 1500);
-  };
-
-  const handleVerifyOtp = () => {
-    if (!otp || otp.length < 4) return;
-    setIsProcessing(true);
-    // Mock API call to MobiFin
+    // Directly confirm and credit (Simulating MobiFin API)
     setTimeout(() => {
       setClaimSuccess(true);
       setIsProcessing(false);
@@ -214,7 +198,6 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                 ref={cardRef}
                 className="relative w-full aspect-square rounded-[2rem] overflow-hidden shadow-inner bg-gray-50 border-4 border-gray-50 group"
               >
-                
                 {/* Prize Underneath */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50 px-6">
                   <motion.div 
@@ -229,7 +212,6 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                     <h3 className="text-4xl font-black text-gray-900 leading-tight mb-1">
                       {prize.label}
                     </h3>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 animate-bounce">🎉 Scratch Card Reward 🎉</p>
                   </motion.div>
                 </div>
 
@@ -246,7 +228,6 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                       onMouseDown={handleStart}
                       onMouseMove={handleMove}
                       onMouseUp={() => setIsScratching(false)}
-                      onMouseLeave={() => setIsScratching(false)}
                       onTouchStart={handleStart}
                       onTouchMove={handleMove}
                       onTouchEnd={() => setIsScratching(false)}
@@ -254,97 +235,51 @@ export default function ScratchCard({ isOpen, onClose }: ScratchCardProps) {
                   )}
                 </AnimatePresence>
                 
-                {/* Visual Polish - Sparkles */}
-                {!revealed && (
-                  <div className="absolute inset-0 pointer-events-none z-20">
-                    <Sparkles className="absolute top-4 left-4 w-5 h-5 text-white/40 animate-pulse" />
-                    <Sparkles className="absolute bottom-4 right-4 w-5 h-5 text-white/40 animate-pulse delay-700" />
-                  </div>
-                )}
-
-                {/* Download Button (Only visible when revealed) */}
                 {revealed && (
                   <button
                     data-html2canvas-ignore
                     onClick={downloadCard}
-                    className="absolute top-4 right-4 z-30 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-[#DF2020] hover:bg-white hover:scale-110 transition-all active:scale-95 border border-red-50"
-                    title="Download Winning Card"
+                    className="absolute top-4 right-4 z-30 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center text-[#DF2020] hover:bg-white transition-all"
                   >
                     <Download className="w-5 h-5" />
                   </button>
                 )}
               </div>
 
-              {/* Bottom Actions */}
-              <div className="mt-8 flex flex-col gap-3">
+              {/* Action Area */}
+              <div className="mt-8">
                 {revealed ? (
                   claimSuccess ? (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="flex flex-col gap-3"
-                    >
-                      <div className="bg-green-50 text-green-700 py-3 rounded-xl font-bold text-sm border border-green-200">
-                        Airtime Credited Successfully! ✅
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-green-500 mb-2">
+                        <CheckCircle2 className="w-10 h-10" />
                       </div>
-                      <button
-                        onClick={onClose}
-                        className="w-full bg-[#DF2020] text-white py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl active:scale-[0.98] transition-transform"
-                      >
-                        Close
-                      </button>
-                    </motion.div>
-                  ) : !otpSent ? (
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="flex flex-col gap-2"
-                    >
-                      <p className="text-xs font-bold text-gray-500 uppercase">Enter phone number to claim</p>
-                      <input
-                        type="tel"
-                        placeholder="e.g. 08012345678"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl text-center font-bold text-gray-900 focus:outline-none focus:border-[#DF2020] focus:ring-1 focus:ring-[#DF2020]"
-                      />
-                      <button
-                        onClick={handleSendOtp}
-                        disabled={isProcessing || phoneNumber.length < 10}
-                        className="w-full bg-[#DF2020] text-white py-3 rounded-xl font-black text-sm uppercase tracking-widest shadow-md disabled:opacity-50 active:scale-[0.98] transition-all mt-1"
-                      >
-                        {isProcessing ? "Sending..." : "Send OTP"}
-                      </button>
+                      <p className="font-black text-slate-900 uppercase tracking-widest text-sm italic">Airtime Sent Successfully!</p>
+                      <button onClick={onClose} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase text-xs tracking-widest">Done</button>
                     </motion.div>
                   ) : (
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="flex flex-col gap-2"
-                    >
-                      <p className="text-xs font-bold text-gray-500 uppercase">Enter OTP sent to your number</p>
-                      <input
-                        type="text"
-                        placeholder="Enter 4-digit OTP"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        maxLength={4}
-                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl text-center font-black text-xl text-gray-900 tracking-[0.5em] focus:outline-none focus:border-[#DF2020] focus:ring-1 focus:ring-[#DF2020]"
-                      />
+                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex flex-col gap-4">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Confirm Phone Number</p>
+                        <input
+                          type="tel"
+                          placeholder="e.g. 08012345678"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          className="w-full bg-slate-50 border-2 border-slate-100 px-6 py-4 rounded-2xl text-center font-black text-lg text-gray-900 focus:outline-none focus:border-[#DF2020] transition-all shadow-inner"
+                        />
+                      </div>
                       <button
-                        onClick={handleVerifyOtp}
-                        disabled={isProcessing || otp.length < 4}
-                        className="w-full bg-[#DF2020] text-white py-3 rounded-xl font-black text-sm uppercase tracking-widest shadow-md disabled:opacity-50 active:scale-[0.98] transition-all mt-1"
+                        onClick={handleClaimAirtime}
+                        disabled={isProcessing || phoneNumber.length < 10}
+                        className="w-full bg-[#DF2020] text-white py-4 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-red-500/30 disabled:opacity-50 active:scale-[0.98] transition-all"
                       >
-                        {isProcessing ? "Verifying..." : "Verify & Credit"}
+                        {isProcessing ? "Crediting..." : "Claim Airtime Now ⚡"}
                       </button>
                     </motion.div>
                   )
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-xs font-black text-gray-300 uppercase tracking-widest">
-                    <Users className="w-4 h-4" />
-                    <span>INDOMIE MOMENTS</span>
-                  </div>
+                  <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Scratch to reveal prize</p>
                 )}
               </div>
             </div>
