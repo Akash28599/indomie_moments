@@ -181,7 +181,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   <button 
                     type="button"
                     onClick={() => {
-                        window.location.href = `https://indomie.ng/myindomiemoments/backend/api/auth/google`;
+                        window.location.href = `/myindomiemoments/backend/api/auth/google`;
                     }}
                     className="h-14 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center gap-3 font-bold text-gray-700 hover:bg-gray-100 transition-colors"
                   >
@@ -191,7 +191,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   <button 
                     type="button"
                     onClick={() => {
-                        window.location.href = `https://indomie.ng/myindomiemoments/backend/api/auth/facebook`;
+                        window.location.href = `/myindomiemoments/backend/api/auth/facebook`;
                     }}
                     className="h-14 rounded-2xl bg-[#1877F2] text-white flex items-center justify-center gap-3 font-bold hover:bg-[#166fe5] transition-colors"
                   >

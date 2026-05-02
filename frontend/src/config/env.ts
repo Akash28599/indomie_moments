@@ -9,7 +9,7 @@
 export const env = {
   APP_NAME: "INDOMIE",
   NODE_ENV: "production",
-  API_BASE_URL: "https://indomie.ng/myindomiemoments/backend/api",
+  API_BASE_URL: "/myindomiemoments/backend/api",
   VITE_APP_TIMEZONE: "Africa/Lagos",
 };
 

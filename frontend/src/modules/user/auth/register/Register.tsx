@@ -247,7 +247,7 @@ export const Register = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    window.location.href = `https://indomie.ng/myindomiemoments/backend/api/auth/google`;
+                    window.location.href = `/myindomiemoments/backend/api/auth/google`;
                   }}
                   className="flex items-center justify-center gap-2 py-3 px-4 border-2 border-gray-100 rounded-xl hover:bg-gray-50 transition-all font-semibold text-sm text-gray-700 cursor-pointer"
                 >
@@ -275,7 +275,7 @@ export const Register = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    window.location.href = `https://indomie.ng/myindomiemoments/backend/api/auth/facebook`;
+                    window.location.href = `/myindomiemoments/backend/api/auth/facebook`;
                   }}
                   className="flex items-center justify-center gap-2 py-3 px-4 border-2 border-[#1877F2] bg-[#1877F2] hover:bg-[#166fe5] rounded-xl transition-all font-semibold text-sm text-white shadow-md shadow-blue-100 cursor-pointer"
                 >
