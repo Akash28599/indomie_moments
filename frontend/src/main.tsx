@@ -18,7 +18,7 @@ createRoot(document.getElementById("root")!).render(
     <ErrorBoundary>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <BrowserRouter>
+          <BrowserRouter basename="/myindomiemoments">
             <ThemeProvider theme={theme}>
               <CssBaseline />
               <App />
