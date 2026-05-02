@@ -1,4 +1,4 @@
-import { z } from "zod";
+// Backend environment configuration — ALL HARDCODED for production
 
 /**
  * Backend environment configuration — ALL HARDCODED for production
@@ -26,7 +26,7 @@ const HARDCODED_ENV = {
   JWT_USER_SECRET: "your_consumer_secret_jwt_admin_key_min_32_chars_here_change_in_production",
 
   // URLs
-  FRONTEND_URL: "https://indomie.ng",
+  FRONTEND_URL: "https://indomie.ng/myindomiemoments",
   BACKEND_URL: "https://indomie.ng/myindomiemoments/backend",
 
   // Azure Storage

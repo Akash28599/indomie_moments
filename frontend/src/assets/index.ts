@@ -17,6 +17,13 @@ import promo6 from './promo6.png'
 import promo7 from './promo7.png'
 import promo8 from './promo8.png'
 
+import gift1 from './1@3x.png'
+import gift2 from './2@3x.png'
+import gift3 from './3@3x.png'
+import gift4 from './4@3x.png'
+import gift5 from './5@3x.png'
+import gift6 from './6@3x.png'
+
 export{
     indomieLogo,
     indomieLogo_Float,
@@ -36,4 +43,10 @@ export{
     promo6,
     promo7,
     promo8,
+    gift1,
+    gift2,
+    gift3,
+    gift4,
+    gift5,
+    gift6,
 }

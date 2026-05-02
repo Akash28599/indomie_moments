@@ -5,7 +5,7 @@ import { AuthModal } from "../../auth/AuthModal";
 import momentLogo from "../../../../assets/momentLogo.png";
 import indomieLogo_Float from "../../../../assets/indomieLogo_Float.png";
 import { redemptionCenters } from "./constant/location.constant";
-import { promo1, promo2, promo3, promo4, promo5, promo6, promo7, promo8 } from "../../../../assets";
+import { promo1, promo2, promo3, promo4, promo5, promo6, promo7, promo8, gift1, gift2, gift3, gift4, gift5, gift6 } from "../../../../assets";
 
 const FEATURED_MOMENTS = [
   { id: 1, title: "Hectic Day", image: promo1 },
@@ -22,6 +22,15 @@ const prizes = [
   { id: 1, name: "Smart TV", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=200" },
   { id: 2, name: "Double Fridge", image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=200" },
   { id: 3, name: "Gaming Console", image: "https://images.unsplash.com/photo-1486401899868-0e435ed85128?auto=format&fit=crop&q=80&w=200" },
+];
+
+const GIFT_IMAGES = [
+  { id: 1, src: gift1, alt: "Gift 1" },
+  { id: 2, src: gift2, alt: "Gift 2" },
+  { id: 3, src: gift3, alt: "Gift 3" },
+  { id: 4, src: gift4, alt: "Gift 4" },
+  { id: 5, src: gift5, alt: "Gift 5" },
+  { id: 6, src: gift6, alt: "Gift 6" },
 ];
 
 const HeartDecor = ({ className = "", opacity = 0.15 }: { className?: string; opacity?: number }) => (
@@ -95,7 +104,7 @@ const LandingPage = () => {
 
         {/* Floating Indomie Packs — horizontal at sides, top on mobile */}
         <img src={indomieLogo_Float} alt="" className="absolute left-0 top-[5%] sm:top-[10%] w-14 sm:w-20 md:w-28 lg:w-36 opacity-90 pointer-events-none z-10 drop-shadow-2xl" />
-        <img src={indomieLogo_Float} alt="" className="absolute right-0 top-[5%] sm:top-[10%] w-14 sm:w-20 md:w-28 lg:w-36 opacity-90 pointer-events-none z-10 drop-shadow-2xl transform scale-x-[-1]" />
+        <img src={indomieLogo_Float} alt="" className="absolute right-0 top-[5%] sm:top-[10%] w-14 sm:w-20 md:w-28 lg:w-36 opacity-90 pointer-events-none z-10 drop-shadow-2xl" />
 
         <div className="relative z-20 max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto px-4 h-full flex flex-col justify-between py-3 sm:py-5">
           {/* Logo */}
@@ -131,24 +140,42 @@ const LandingPage = () => {
       </section>
 
       {/* ── LOWER SECTION (transparent — unified gradient continues) ── */}
-      <section className="flex-1 min-h-0 relative flex flex-col justify-between px-4 sm:px-6 py-3 sm:py-5 overflow-hidden z-10">
+      <section className="flex-1 min-h-0 relative flex flex-col justify-between px-4 sm:px-6 py-3 sm:py-5 overflow-y-auto no-scrollbar z-10">
 
         <div className="relative z-10 max-w-3xl mx-auto w-full flex flex-col justify-between flex-1 min-h-0 gap-2 sm:gap-3">
 
-          {/* Prizes */}
-          <div className="shrink-0 text-center">
-            <h2 className="text-[8px] sm:text-xs font-black text-white/60 uppercase tracking-[0.2em] mb-2 sm:mb-3">
+          {/* Gifts Gallery — Scrollable */}
+          <div className="shrink-0">
+            <h2 className="text-[8px] sm:text-xs font-black text-white/60 uppercase tracking-[0.2em] mb-2 text-center flex items-center justify-center gap-2">
+              <Gift className="w-3 h-3 sm:w-4 sm:h-4" />
               Grand Prizes to be Won
+              <Gift className="w-3 h-3 sm:w-4 sm:h-4" />
             </h2>
-            <div className="flex gap-2 sm:gap-4 justify-center">
-              {prizes.map((p) => (
-                <div key={p.id} className="flex-1 max-w-[140px] bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-4 border border-white/20 shadow-lg shadow-black/20 flex flex-col items-center text-center">
-                  <div className="w-10 sm:w-16 md:w-20 h-10 sm:h-16 md:h-20 rounded-lg sm:rounded-xl overflow-hidden mb-1.5 sm:mb-3 border border-gray-100">
-                    <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+            <div className="relative overflow-hidden">
+              {/* Edge fade gradients */}
+              <div className="absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, rgba(29,58,153,0.8), transparent)" }} />
+              <div className="absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, rgba(29,58,153,0.8), transparent)" }} />
+              <div
+                className="flex gap-3 sm:gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                }}
+              >
+                {GIFT_IMAGES.map((gift) => (
+                  <div
+                    key={gift.id}
+                    className="snap-center shrink-0 w-[100px] sm:w-[140px] md:w-[160px] rounded-xl sm:rounded-2xl overflow-hidden border-2 border-white/20 shadow-lg shadow-black/20 bg-white/10 backdrop-blur-sm hover:scale-105 transition-transform duration-300"
+                  >
+                    <img
+                      src={gift.src}
+                      alt={gift.alt}
+                      className="w-full h-[100px] sm:h-[140px] md:h-[160px] object-cover"
+                      loading="lazy"
+                    />
                   </div>
-                  <h3 className="font-black text-gray-900 text-[9px] sm:text-sm">{p.name}</h3>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 

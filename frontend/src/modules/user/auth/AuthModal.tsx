@@ -89,7 +89,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center md:items-end"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center"
           />
 
           {/* Modal Content */}
@@ -98,7 +98,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 md:relative md:bottom-auto w-full max-w-md bg-white rounded-t-[3rem] md:rounded-[3rem] p-8 pb-12 z-[101] shadow-2xl overflow-hidden"
+            className="fixed bottom-0 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-full max-w-md bg-white rounded-t-[3rem] md:rounded-[3rem] p-8 pb-12 z-[101] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Grab handle for mobile */}
             <div className="w-12 h-1.5 bg-gray-100 rounded-full mx-auto mb-8 md:hidden" />
